@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             xmlns:vm="clr-namespace:NsauTimetable.Client.ViewModels"
+             x:Class="NsauTimetable.Client.Views.TimetableView">
+
+    <ContentPage.BindingContext>
+        <vm:TimetableViewModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Padding"  Value="0"/>
+        </Style>
+    </ContentPage.Resources>
+    
+    <ContentPage.Content>
+        <Grid
+            Padding="0"
+            ColumnSpacing="0"
+            RowSpacing="0"
+            BackgroundColor="Green">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <Grid 
+                Padding="0"
+                Margin="0"
+                ColumnSpacing="0"
+                BackgroundColor="Yellow">
+                <Button 
+                    Padding="0"
+                    Margin="0"
+                    Text="Нечетная" />
+
+                <Button 
+                    Padding="0"
+                    Margin="0"
+                    Text="Четная"
+                    Grid.Column="1"/>
+            </Grid>
+
+            <IndicatorView 
+                Grid.Row="1"
+                x:Name="indicatorView"
+                IndicatorColor="LightGray"
+                SelectedIndicatorColor="DarkGray"
+                HorizontalOptions="Center">
+            </IndicatorView>
+
+            <CarouselView
+                Grid.Row="2"
+                IndicatorView="indicatorView"
+                HorizontalScrollBarVisibility ="Always"
+                ItemsSource ="{Binding TimetableByDays}">
+                <CarouselView.ItemTemplate>
+                    <DataTemplate>
+                        <ListView ItemsSource="{Binding Timetable}">
+                            
+                        </ListView>
+                    </DataTemplate>
+                </CarouselView.ItemTemplate>
+                
+            </CarouselView>
+            
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>
