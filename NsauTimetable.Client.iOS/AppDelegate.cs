@@ -23,7 +23,6 @@ namespace NsauTimetable.Client.iOS
         //
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
-            Forms.SetFlags("IndicatorView_Experimental");
             Forms.Init();
             LoadApplication(new App());
 

@@ -3,13 +3,17 @@ using NsauTimetable.Client.ViewModels.BaseViewModels;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Xamarin.Forms;
 
 namespace NsauTimetable.Client.ViewModels
 {
     public class TimetableViewModel : BaseViewModel
     {
         private WeekItem _selectedWeek;
-        private DayItem _selectedDay;
+        private DayOfWeek _selectedDay = DayOfWeek.Monday;
+        private bool _isEvenWeek = false;
+
+        private int _carouselTimetablePosition;
 
         public WeekItem SelectedWeek
         {
@@ -17,10 +21,22 @@ namespace NsauTimetable.Client.ViewModels
             set => SetProperty(ref _selectedWeek, value);
         }
 
-        public DayItem SelectedDay
+        public DayOfWeek SelectedDay
         {
             get => _selectedDay;
-            set => SetProperty(ref _selectedDay, value);
+            set
+            {
+                if (SetProperty(ref _selectedDay, value))
+                {
+                    UpdateCarouselPosition(value);
+                }
+            }
+        }
+
+        public bool IsEvenWeek 
+        { 
+            get => _isEvenWeek; 
+            set => SetProperty(ref _isEvenWeek, value); 
         }
 
         public readonly ObservableCollection<WeekItem> WeekItems = new ObservableCollection<WeekItem>
@@ -39,19 +55,62 @@ namespace NsauTimetable.Client.ViewModels
             new DayItem { DayOfWeek = DayOfWeek.Saturday, Title = "СБ"}
         };
 
-        public ObservableCollection<TimetableByDay> TimetableByDays
-        {
-            get; set;
+        public int CarouselTimetablePosition 
+        { 
+            get => _carouselTimetablePosition;
+            set
+            {
+                if (SetProperty(ref _carouselTimetablePosition, value))
+                {
+                    SetSelectedDay(value);
+                }
+            }
         }
+
+        public ObservableCollection<TimetableByDay> TimetableByDays { get; set; }
+
+        public Command SetIsEvenWeekCommand { get; set; }
+
+        public Command SetSelectedDayCommand { get; set; }
 
         public TimetableViewModel()
         {
             Title = "Расписание Title";
             _selectedWeek = WeekItems.First();
-            _selectedDay = DayItems.First();
+            //_selectedDay = DayItems.First();
 
             var list = TimetableService.GetTimetables();
             TimetableByDays = new ObservableCollection<TimetableByDay>(list);
+            InitCommands();
+        }
+
+        public void InitCommands()
+        {
+            SetIsEvenWeekCommand = new Command<string>(SetIsEvenWeek);
+            SetSelectedDayCommand = new Command<string>(SetSelectedDay);
+        }
+
+        private void SetIsEvenWeek(string isEvenWeek)
+        {
+            IsEvenWeek = bool.Parse(isEvenWeek);
+        }
+
+        private void SetSelectedDay(string newDay)
+        {
+            Enum.TryParse(newDay, ignoreCase: true, out DayOfWeek day);
+            SelectedDay = day;
+        }
+
+        private void SetSelectedDay(int carouselPosition)
+        {
+            // Do "+1" because index of carousel position starts from 0
+            SelectedDay = (DayOfWeek)(carouselPosition + 1);
+        }
+
+        private void UpdateCarouselPosition(DayOfWeek day)
+        {
+            // Do "-1" because index of carousel position starts from 0
+            CarouselTimetablePosition = (int)day - 1;
         }
     }
 }

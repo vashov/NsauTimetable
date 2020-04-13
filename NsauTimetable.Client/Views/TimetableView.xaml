@@ -13,7 +13,10 @@
 
     <ContentPage.Resources>
         <Style TargetType="Button">
+            <Setter Property="BackgroundColor" Value="AliceBlue" />
             <Setter Property="Padding"  Value="0"/>
+            <Setter Property="BorderWidth" Value="0" />
+            <Setter Property="CornerRadius" Value="0" />
         </Style>
     </ContentPage.Resources>
     
@@ -22,47 +25,210 @@
             Padding="0"
             ColumnSpacing="0"
             RowSpacing="0"
-            BackgroundColor="Green">
+            BackgroundColor="LightGray">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition />
+                <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
-
+            
             <Grid 
                 Padding="0"
                 Margin="0"
                 ColumnSpacing="0"
                 BackgroundColor="Yellow">
-                <Button 
-                    Padding="0"
-                    Margin="0"
-                    Text="Нечетная" />
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
 
                 <Button 
-                    Padding="0"
-                    Margin="0"
+                    Text="Нечетная" 
+                    Command="{Binding SetIsEvenWeekCommand}"
+                    CommandParameter="false">
+                    <Button.Triggers>
+                        <DataTrigger 
+                            TargetType="Button" 
+                            Binding="{Binding IsEvenWeek}" 
+                            Value="False">
+                            <Setter Property="BackgroundColor"  Value="LightSlateGray" />
+                            <Setter Property="TextColor"  Value="Red" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+
+                <Button 
                     Text="Четная"
-                    Grid.Column="1"/>
+                    Grid.Column="1"
+                    Command="{Binding SetIsEvenWeekCommand}"
+                    CommandParameter="true">
+                    <Button.Triggers>
+                        <DataTrigger 
+                            TargetType="Button" 
+                            Binding="{Binding IsEvenWeek}" 
+                            Value="True">
+                            <Setter Property="BackgroundColor"  Value="LightSlateGray" />
+                            <Setter Property="TextColor"  Value="Red" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
             </Grid>
 
-            <IndicatorView 
-                Grid.Row="1"
-                x:Name="indicatorView"
-                IndicatorColor="LightGray"
-                SelectedIndicatorColor="DarkGray"
-                HorizontalOptions="Center">
-            </IndicatorView>
+            <Grid
+                Margin="0,0,0,10"
+                Padding="0"
+                Grid.Row="2"
+                ColumnSpacing="0"
+                BackgroundColor="Red">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Button 
+                    Text="ПН"
+                    Command="{Binding SetSelectedDayCommand}"
+                    CommandParameter="Monday">
+                    <Button.Triggers>
+                        <DataTrigger 
+                            TargetType="Button" 
+                            Binding="{Binding SelectedDay}" 
+                            Value="{x:Static x:DayOfWeek.Monday}">
+                            <Setter Property="BackgroundColor"  Value="LightSlateGray" />
+                            <Setter Property="TextColor"  Value="Red" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+
+                <Button 
+                    Grid.Column="1"
+                    Text="ВТ"
+                    Command="{Binding SetSelectedDayCommand}"
+                    CommandParameter="Tuesday">
+                    <Button.Triggers>
+                        <DataTrigger 
+                            TargetType="Button" 
+                            Binding="{Binding SelectedDay}" 
+                            Value="{x:Static x:DayOfWeek.Tuesday}">
+                            <Setter Property="BackgroundColor"  Value="LightSlateGray" />
+                            <Setter Property="TextColor"  Value="Red" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                    
+                </Button>
+
+                <Button 
+                    Grid.Column="2"
+                    Text="СР"
+                    Command="{Binding SetSelectedDayCommand}"
+                    CommandParameter="Wednesday">
+                    <Button.Triggers>
+                        <DataTrigger 
+                            TargetType="Button" 
+                            Binding="{Binding SelectedDay}" 
+                            Value="{x:Static x:DayOfWeek.Wednesday}">
+                            <Setter Property="BackgroundColor"  Value="LightSlateGray" />
+                            <Setter Property="TextColor"  Value="Red" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                    
+                </Button>
+
+                <Button 
+                    Grid.Column="3"
+                    Text="ЧТ"
+                    Command="{Binding SetSelectedDayCommand}"
+                    CommandParameter="Thursday">
+                    <Button.Triggers>
+                        <DataTrigger 
+                            TargetType="Button" 
+                            Binding="{Binding SelectedDay}" 
+                            Value="{x:Static x:DayOfWeek.Thursday}">
+                            <Setter Property="BackgroundColor"  Value="LightSlateGray" />
+                            <Setter Property="TextColor"  Value="Red" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+
+                <Button 
+                    Grid.Column="4"
+                    Text="ПТ"
+                    Command="{Binding SetSelectedDayCommand}"
+                    CommandParameter="Friday">
+                    <Button.Triggers>
+                        <DataTrigger 
+                            TargetType="Button" 
+                            Binding="{Binding SelectedDay}" 
+                            Value="{x:Static x:DayOfWeek.Friday}">
+                            <Setter Property="BackgroundColor"  Value="LightSlateGray" />
+                            <Setter Property="TextColor"  Value="Red" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                    
+                </Button>
+
+                <Button 
+                    Grid.Column="5"
+                    Text="СБ"
+                    Command="{Binding SetSelectedDayCommand}"
+                    CommandParameter="Saturday">
+                    <Button.Triggers>
+                        <DataTrigger 
+                            TargetType="Button" 
+                            Binding="{Binding SelectedDay}" 
+                            Value="{x:Static x:DayOfWeek.Saturday}">
+                            <Setter Property="BackgroundColor"  Value="LightSlateGray" />
+                            <Setter Property="TextColor"  Value="Red" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+
+            </Grid>
 
             <CarouselView
-                Grid.Row="2"
-                IndicatorView="indicatorView"
+                Position="{Binding CarouselTimetablePosition}"
+                x:Name="carouselTimetable"
+                Grid.Row="1"
                 HorizontalScrollBarVisibility ="Always"
                 ItemsSource ="{Binding TimetableByDays}">
                 <CarouselView.ItemTemplate>
                     <DataTemplate>
-                        <ListView ItemsSource="{Binding Timetable}">
-                            
+                        <ListView 
+                            HasUnevenRows="True"
+                            SeparatorVisibility="None"
+                            ItemsSource="{Binding Timetable}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <Frame 
+                                            Padding="10"
+                                            Margin="10, 6">
+                                            <Grid Padding="0"
+                                                  Margin="0">
+                                                <Label 
+                                                    Grid.ColumnSpan="2"
+                                                    FontAttributes="Bold"
+                                                    Text="{Binding Title}"/>
+                                                <Label 
+                                                    Grid.Row="1"
+                                                    Grid.ColumnSpan="2"
+                                                    Text="{Binding TeachersDisplay}"/>
+                                                <Label 
+                                                    Grid.Row="2"
+                                                    Grid.Column="0"
+                                                    Text="{Binding IntervalDisplay}"/>
+                                                <Label 
+                                                    Grid.Row="2"
+                                                    Grid.Column="1"
+                                                    Text="{Binding Cabinet}" />
+                                            </Grid>
+                                        </Frame>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
                         </ListView>
                     </DataTemplate>
                 </CarouselView.ItemTemplate>
