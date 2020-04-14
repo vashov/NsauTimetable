@@ -8,7 +8,8 @@
             x:Class="NsauTimetable.Client.Views.MainPage">
 
     <TabbedPage.Children>
-        <NavigationPage Title="Расписание">
+        <views:TimetableView Title="Расписание" IconImageSource="timetable.png"/>
+        <!--<NavigationPage Title="Расписание" IconImageSource="timetable.png">
             <x:Arguments>
                 <views:TimetableView />
             </x:Arguments>
@@ -17,9 +18,10 @@
                     <On Platform="iOS" Value="tab_feed.png"/>
                 </OnPlatform>
             </NavigationPage.Icon>
-        </NavigationPage>
-        
-        <NavigationPage Title="Объявления">
+        </NavigationPage>-->
+
+        <views:AdsView Title="Объявления" IconImageSource="ads.png"/>
+        <!--<NavigationPage Title="Объявления" IconImageSource="ads.png">
             <x:Arguments>
                 <views:AdsView />
             </x:Arguments>
@@ -28,9 +30,10 @@
                     <On Platform="iOS" Value="tab_about.png"/>
                 </OnPlatform>
             </NavigationPage.Icon>
-        </NavigationPage>
+        </NavigationPage>-->
 
-        <NavigationPage Title="Настройки">
+        <views:SettingsView Title="Настройки" IconImageSource="settings.png"/>
+        <!--<NavigationPage Title="Настройки" IconImageSource="settings.png">
             <x:Arguments>
                 <views:SettingsView />
             </x:Arguments>
@@ -39,7 +42,7 @@
                     <On Platform="iOS" Value="tab_about.png"/>
                 </OnPlatform>
             </NavigationPage.Icon>
-        </NavigationPage>
+        </NavigationPage>-->
     </TabbedPage.Children>
     
 </TabbedPage>

@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NsauTimetable.Web", "NsauTi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NsauTimetable.Client", "NsauTimetable.Client\NsauTimetable.Client.csproj", "{822B0626-58EE-487F-AD7A-A12A2A62A84F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NsauTimetable.Client.DAL", "NsauTimetable.Client.DAL\NsauTimetable.Client.DAL.csproj", "{9B15820F-B2B7-4478-B09A-E64621E5616F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,18 @@ Global
 		{822B0626-58EE-487F-AD7A-A12A2A62A84F}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{822B0626-58EE-487F-AD7A-A12A2A62A84F}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{822B0626-58EE-487F-AD7A-A12A2A62A84F}.Release|iPhoneSimulator.Deploy.0 = Release|Any CPU
+		{9B15820F-B2B7-4478-B09A-E64621E5616F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B15820F-B2B7-4478-B09A-E64621E5616F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B15820F-B2B7-4478-B09A-E64621E5616F}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{9B15820F-B2B7-4478-B09A-E64621E5616F}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{9B15820F-B2B7-4478-B09A-E64621E5616F}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{9B15820F-B2B7-4478-B09A-E64621E5616F}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{9B15820F-B2B7-4478-B09A-E64621E5616F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B15820F-B2B7-4478-B09A-E64621E5616F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B15820F-B2B7-4478-B09A-E64621E5616F}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{9B15820F-B2B7-4478-B09A-E64621E5616F}.Release|iPhone.Build.0 = Release|Any CPU
+		{9B15820F-B2B7-4478-B09A-E64621E5616F}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{9B15820F-B2B7-4478-B09A-E64621E5616F}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

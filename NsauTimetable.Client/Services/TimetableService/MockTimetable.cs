@@ -6,9 +6,18 @@ using System.Text;
 
 namespace NsauTimetable.Client.Services.TimetableService
 {
-    public class TimetableMock : ITimetableService
+    public class MockTimetable : ITimetableService
     {
+        private List<string> _groups = new List<string>
+        {
+            "1101", "1102", "1103", "1104", "1105", "1106", "1107", "1108", "1109", "1110",
+            "1201", "1202", "1203", "1204", "1205", "1206", "1207", "1208", "1209", "1210",
+            "1301", "1302", "1303", "1304", "1305", "1306", "1307", "1308", "1309", "1310",
+            "1401", "1402", "1403", "1404", "1405", "1406", "1407", "1408", "1409", "1410",
+        };
+
         private List<TimetableByDay> _timetableByDays;
+
         private List<Period> _timetables = new List<Period>()
         {
             new Period
@@ -61,7 +70,7 @@ namespace NsauTimetable.Client.Services.TimetableService
             }
         };
 
-        public TimetableMock()
+        public MockTimetable()
         {
             _timetableByDays = new List<TimetableByDay>()
             {
@@ -102,6 +111,11 @@ namespace NsauTimetable.Client.Services.TimetableService
                     Timetable = _timetables.ToList()
                 }
             };
+        }
+
+        public List<string> GetGroups()
+        {
+            return _groups;
         }
 
         public List<TimetableByDay> GetTimetables()

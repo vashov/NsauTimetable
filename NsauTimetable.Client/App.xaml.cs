@@ -5,6 +5,7 @@ using Xamarin.Forms.Xaml;
 using NsauTimetable.Client.Services;
 using NsauTimetable.Client.Views;
 using NsauTimetable.Client.Services.TimetableService;
+using NsauTimetable.Client.Services.AdsService;
 
 namespace NsauTimetable.Client
 {
@@ -21,11 +22,8 @@ namespace NsauTimetable.Client
         {
             InitializeComponent();
 
-            DependencyService.Register<ITimetableService, TimetableMock>();
-            if (UseMockDataStore)
-                DependencyService.Register<MockDataStore>();
-            else
-                DependencyService.Register<AzureDataStore>();
+            RegisterServices();
+
             MainPage = new MainPage();
         }
 
@@ -39,6 +37,17 @@ namespace NsauTimetable.Client
 
         protected override void OnResume()
         {
+        }
+
+        private void RegisterServices()
+        {
+            DependencyService.Register<ITimetableService, MockTimetable>();
+            DependencyService.Register<IAdsService, MockAds>();
+
+            if (UseMockDataStore)
+                DependencyService.Register<MockDataStore>();
+            else
+                DependencyService.Register<AzureDataStore>();
         }
     }
 }

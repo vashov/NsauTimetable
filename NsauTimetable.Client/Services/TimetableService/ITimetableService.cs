@@ -6,5 +6,6 @@ namespace NsauTimetable.Client.Services.TimetableService
     public interface ITimetableService
     {
         List<TimetableByDay> GetTimetables();
+        List<string> GetGroups();
     }
 }

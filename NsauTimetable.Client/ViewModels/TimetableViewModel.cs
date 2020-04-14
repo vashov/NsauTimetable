@@ -1,6 +1,7 @@
 ﻿using NsauTimetable.Client.Models;
 using NsauTimetable.Client.ViewModels.BaseViewModels;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Xamarin.Forms;
@@ -9,10 +10,12 @@ namespace NsauTimetable.Client.ViewModels
 {
     public class TimetableViewModel : BaseViewModel
     {
+        private const string DefaultSelectedGroup = "Не выбрано";
+        private string _selectedGroup;
+
         private WeekItem _selectedWeek;
         private DayOfWeek _selectedDay = DayOfWeek.Monday;
         private bool _isEvenWeek = false;
-
         private int _carouselTimetablePosition;
 
         public WeekItem SelectedWeek
@@ -39,13 +42,19 @@ namespace NsauTimetable.Client.ViewModels
             set => SetProperty(ref _isEvenWeek, value); 
         }
 
-        public readonly ObservableCollection<WeekItem> WeekItems = new ObservableCollection<WeekItem>
+        public string SelectedGroup 
+        { 
+            get => _selectedGroup; 
+            set => SetProperty(ref _selectedGroup, value); 
+        }
+
+        public ObservableCollection<WeekItem> WeekItems { get; } = new ObservableCollection<WeekItem>
         {
             new WeekItem { WeekType = WeekType.Even, Title = "Нечетная"},
             new WeekItem { WeekType = WeekType.Odd, Title = "Четная"}
         };
 
-        public readonly ObservableCollection<DayItem> DayItems = new ObservableCollection<DayItem>
+        public ObservableCollection<DayItem> DayItems { get; } = new ObservableCollection<DayItem>
         {
             new DayItem { DayOfWeek = DayOfWeek.Monday, Title = "ПН"},
             new DayItem { DayOfWeek = DayOfWeek.Tuesday, Title = "ВТ"},
@@ -68,10 +77,10 @@ namespace NsauTimetable.Client.ViewModels
         }
 
         public ObservableCollection<TimetableByDay> TimetableByDays { get; set; }
+        public ObservableCollection<string> Groups { get; set; }
 
-        public Command SetIsEvenWeekCommand { get; set; }
-
-        public Command SetSelectedDayCommand { get; set; }
+        public Command SetIsEvenWeekCommand { get; private set; }
+        public Command SetSelectedDayCommand { get; private set; }
 
         public TimetableViewModel()
         {
@@ -79,15 +88,31 @@ namespace NsauTimetable.Client.ViewModels
             _selectedWeek = WeekItems.First();
             //_selectedDay = DayItems.First();
 
-            var list = TimetableService.GetTimetables();
-            TimetableByDays = new ObservableCollection<TimetableByDay>(list);
+            InitTimetable();
+            InitGroups();
+
             InitCommands();
         }
 
-        public void InitCommands()
+        private void InitCommands()
         {
             SetIsEvenWeekCommand = new Command<string>(SetIsEvenWeek);
             SetSelectedDayCommand = new Command<string>(SetSelectedDay);
+        }
+
+        private void InitTimetable()
+        {
+            List<TimetableByDay> list = TimetableService.GetTimetables();
+            TimetableByDays = new ObservableCollection<TimetableByDay>(list);
+        }
+
+        private void InitGroups()
+        {
+            List<string> groups = TimetableService.GetGroups();
+            groups.Insert(0, DefaultSelectedGroup);
+
+            Groups = new ObservableCollection<string>(groups);
+            SelectedGroup = groups.First();
         }
 
         private void SetIsEvenWeek(string isEvenWeek)

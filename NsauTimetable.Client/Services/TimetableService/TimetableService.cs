@@ -7,6 +7,11 @@ namespace NsauTimetable.Client.Services.TimetableService
 {
     public class TimetableService : ITimetableService
     {
+        public List<string> GetGroups()
+        {
+            throw new NotImplementedException();
+        }
+
         public List<TimetableByDay> GetTimetables()
         {
             throw new NotImplementedException();
