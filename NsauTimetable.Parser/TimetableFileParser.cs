@@ -1,5 +1,7 @@
 ﻿using ExcelDataReader;
 using NsauTimetable.Parser.Helpers;
+using NsauTimetable.Parser.Models;
+using NsauTimetable.Parser.Models.ExcelParseInfo;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,85 +12,281 @@ namespace NsauTimetable.Parser
 {
     public class TimetableFileParser
     {
-        public void ParseExcelFile(string fileName)
+        private const int SubjectSectionWidth = 4;
+        private readonly int[] _skipThisRows = { 1, 3, 4, 5 };
+        
+        public List<TimetableModel> ParseExcelFile(string fileName)
         {
             ConsoleHelper.HorizontalLine();
 
+            var timetables = new List<TimetableModel>();
+
             using (var stream = File.Open(fileName, FileMode.Open, FileAccess.Read))
             {
-                // Auto-detect format, supports: Binary Excel files (2.0-2003 format; *.xls), OpenXml Excel files (2007 format; *.xlsx)
+                // Auto-detect format: 
+                // Binary Excel files (2.0-2003 format; *.xls), OpenXml Excel files (2007 format; *.xlsx)
                 using (var reader = ExcelReaderFactory.CreateReader(stream))
                 {
-                    int[] skipThisRows = { 1, 3, 4, 5 };
-                    int sectionWidthSubject = 4;
-
-                    int amountOfPeriodsByDay = 6; // width of day section
-                    int amountOfDays = 6;
-
-                    int columnOfSubjectInfo = 1;
-
                     do
                     {
-                        ConsoleHelper.WriteOk(reader.Name);
-                        int rowCounter = 0;
-                        while (reader.Read())
+                        if (reader.VisibleState != "visible")
                         {
-                            rowCounter++;
-                            
-                            // Skip some rows
-                            if (skipThisRows.Contains(rowCounter))
+                            continue;
+                        }
+
+                        var timetable = new TimetableModel()
+                        {
+                            SheetTitle = reader.Name,
+                            Subjects = new List<SubjectModel>()
+                        };
+
+                        ParseHeader(reader, timetable);
+
+                        SubjectModel subject = null;
+                        do
+                        {
+                            subject = ParseRowsOfSubject(reader);
+
+                            if (subject != null)
                             {
-                                continue;
-                            }
-
-                            if (rowCounter == 2)
-                            {
-                                List<string> groupNumbers = GetGroupNumbers(reader);
-                                ConsoleHelper.WriteOk(string.Join(", ", groupNumbers.ToArray()));
-                                continue;
-                            }
-
-                            int currentDay = 1;
-                            int currentPeriod = 1;
-                            for (int i = 0; i < reader.FieldCount; i++)
-                            {
-                                if (i < sectionWidthSubject)
-                                {
-                                    if (i != columnOfSubjectInfo)
-                                    {
-                                        continue;
-                                    }
-
-                                    // Get subject and time
-                                    string value = GetStringValue(reader, i);
-                                    ConsoleHelper.WriteOk(value);
-                                    continue;
-                                }
-
-                                if (currentDay <= amountOfDays)
-                                {
-                                    if (currentPeriod <= amountOfPeriodsByDay)
-                                    {
-                                        currentPeriod++;
-                                        // TODO:
-                                    }
-                                    else
-                                    {
-                                        currentDay++;
-                                    }
-                                }
-                                
-                                // TODO: Get teachers
-                                // Here code
-
-                                Console.WriteLine($"{i}: {GetStringValue(reader, i)}");
+                                timetable.Subjects.Add(subject);
                             }
                         }
+                        while (subject != null);
+
+                        timetables.Add(timetable);
+
                     } while (reader.NextResult());
                 }
             }
 
             ConsoleHelper.HorizontalLine();
+
+            return timetables;
+        }
+
+        private void ParseHeader(IExcelDataReader reader, TimetableModel timetable)
+        {
+            const int headerHeight = 5;
+
+            for (int currentRow = 1; currentRow <= headerHeight; currentRow++)
+            {
+                if (!reader.Read())
+                {
+                    return;
+                }
+
+                if (!_skipThisRows.Contains(currentRow))
+                {
+                    timetable.Groups = GetGroupNumbers(reader);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Return null if there are no more subjects
+        /// </summary>
+        private SubjectModel ParseRowsOfSubject(IExcelDataReader reader)
+        {
+            var subject = new SubjectModel()
+            {
+                Days = new List<SchoolDay>()
+            };
+
+            const int weekCount = 2;
+            bool isEvenWeek = false;
+
+            for (int week = 1; week <= weekCount; week++, isEvenWeek = !isEvenWeek)
+            {
+                WeekInfo weekInfo = ParseWeek(reader, isEvenWeek);
+                if (weekInfo == null)
+                {
+                    return null;
+                }
+
+                if (isEvenWeek)
+                {
+                    string fromToShared = weekInfo.SubjectSection;
+                    FillFromTo(subject, fromToShared);
+                }
+                else
+                {
+                    subject.Title = weekInfo.SubjectSection;
+                    subject.Teachers = weekInfo.TeachersSection;
+                }
+
+                foreach (DayInfo day in weekInfo.Days)
+                {
+                    subject.Days.Add(new SchoolDay
+                    {
+                        Day = day.Day,
+                        IsDayOfEvenWeek = isEvenWeek,
+                        Periods = day.Periods
+                    });
+                }
+            }
+
+            return subject;
+        }
+
+        private void FillFromTo(SubjectModel subject, string fromToShared)
+        {
+            string pattern = "\\s*\\.*\\s*с\\s*\\d*\\.\\d*\\s*по\\s*\\d*\\.\\d*";
+            string patternLecture = "л" + pattern;
+            string patternPractice = "пр" + pattern;
+            Match lecture = Regex.Match(fromToShared, patternLecture);
+            Match practice = Regex.Match(fromToShared, patternPractice);
+
+            subject.FromToLecture = lecture.Value;
+            subject.FromToPractice = practice.Value;
+        }
+
+        /// <summary>
+        /// Return null if there are no more subjects
+        /// </summary>
+        private WeekInfo ParseWeek(IExcelDataReader reader, bool isEvenWeek)
+        {
+            bool isUpperRowOfWeek = true;
+            const int rowCount = 2;
+
+            WeekInfo weekInfo = null;
+
+            for (int weekRow = 1; weekRow <= rowCount; weekRow++, isUpperRowOfWeek = !isUpperRowOfWeek)
+            {
+                WeekInfo weekRowInfo = ParseWeekRow(reader, isEvenWeek, isUpperRowOfWeek);
+                if (weekRowInfo == null)
+                {
+                    return null;
+                }
+
+                if (weekInfo == null) // if isUpperRowOfWeek
+                {
+                    weekInfo = weekRowInfo;
+                }
+                else
+                {
+                    foreach (DayInfo day in weekInfo.Days)
+                    {
+                        foreach (PeriodInfo period in day.Periods)
+                        {
+                            PeriodInfo periodInfo = weekRowInfo
+                                .Days.First(lowDay => lowDay.Day == day.Day)
+                                .Periods.First(lowPeriod => lowPeriod.Number == period.Number);
+
+                            period.LowerInfo = periodInfo.LowerInfo;
+                        }
+                    }
+                }
+            }
+
+            DeleteEmptyPeriodsAndEmptyDays(weekInfo);
+
+            // if empty rows were readed
+            if (!weekInfo.Days.Any())
+            {
+                return null;
+            }
+
+            return weekInfo;
+        }
+
+        private void DeleteEmptyPeriodsAndEmptyDays(WeekInfo week)
+        {
+            // clean periods
+            week.Days.ForEach(day => day.Periods.RemoveAll(period
+                => string.IsNullOrWhiteSpace(period.UpperInfo) && string.IsNullOrWhiteSpace(period.LowerInfo)));
+
+            // clean days
+            week.Days.RemoveAll(day => !day.Periods.Any());
+        }
+
+        /// <summary>
+        /// Return null if there are no more subjects
+        /// </summary>
+        private WeekInfo ParseWeekRow(IExcelDataReader reader, bool isEvenWeek, bool isUpperRowOfWeek)
+        {
+            if (!reader.Read())
+            {
+                return null;
+            }
+
+            var weekRowInfo = new WeekInfo()
+            {
+                Days = new List<DayInfo>()
+            };
+
+            int subjectTitleColumn = 1;
+            if (isUpperRowOfWeek)
+            {
+                // Get subject info: title / from-to-time
+                weekRowInfo.SubjectSection = GetStringValue(reader, subjectTitleColumn);
+            }
+
+            for (DayOfWeek day = DayOfWeek.Monday; DayHelper.IsSchoolDay(day); day++)
+            {
+                List<PeriodInfo> periods = ParseSchoolDay(reader, day, isUpperRowOfWeek);
+
+                weekRowInfo.Days.Add(new DayInfo
+                {
+                    Day = day,
+                    Periods = periods
+                });
+            }
+
+            int teachersColumn = GetTeachersSectionColumn();
+
+            // Get teachers
+            if (!isEvenWeek && isUpperRowOfWeek)
+            {
+                string teachers = GetStringValue(reader, teachersColumn);
+                weekRowInfo.TeachersSection = teachers;
+                //ConsoleHelper.WriteOk("Teachers: " + teachers);
+            }
+
+            return weekRowInfo;
+        }
+
+        private List<PeriodInfo> ParseSchoolDay(IExcelDataReader reader, DayOfWeek day, bool isUpperRowOfWeek)
+        {
+            int dayColumnWidth = PeriodHelper.GetCountOfPeriods();
+            int firstPeriodAdditionalValue = SubjectSectionWidth + (dayColumnWidth * ((int)day - 1)) - 1;
+
+            var periodsInfo = new List<PeriodInfo>();
+
+            for (PeriodNumber number = PeriodNumber.First; PeriodHelper.IsValidPeriod(number); number++)
+            {
+                int column = firstPeriodAdditionalValue + (int)number;
+
+                string info = GetStringValue(reader, column);
+
+                var periodInfo = new PeriodInfo()
+                {
+                    Number = number
+                };
+
+                if (isUpperRowOfWeek)
+                {
+                    periodInfo.UpperInfo = info;
+                }
+                else
+                {
+                    periodInfo.LowerInfo = info;
+                }
+
+                periodsInfo.Add(periodInfo);
+                //ConsoleHelper.WriteOk($"День: {currentDay}, Пара: {currentPeriod}, " +
+                //    $"Вверх: {isUpperRowOfWeek}, Четная: {isEvenWeek}," + period);
+            }
+
+            return periodsInfo;
+        }
+
+        private int GetTeachersSectionColumn()
+        {
+            int dayColumnWidth = PeriodHelper.GetCountOfPeriods();
+            int daysSummaryWidth = dayColumnWidth * DayHelper.GetCountOfSchoolDays();
+            int teachersSectionColumn = SubjectSectionWidth + daysSummaryWidth;
+            return teachersSectionColumn;
         }
 
         private string GetStringValue(IExcelDataReader reader, int field)
@@ -97,7 +295,7 @@ namespace NsauTimetable.Parser
 
             if (columnValue is string stringValue)
             {
-                return stringValue;
+                return stringValue?.Trim();
             }
 
             if (columnValue is double doubleValue)
@@ -126,7 +324,8 @@ namespace NsauTimetable.Parser
             Match match = Regex.Match(str, groupNumbersPattern);
 
             Group regexGroup = match.Groups[regexLabel];
-            List<string> groupNumbersOfStudents = regexGroup.Value.Trim().Replace(" ", "").Split(',').ToList();
+            List<string> groupNumbersOfStudents = 
+                regexGroup.Value.Trim().Replace(" ", "").Split(',').ToList();
 
             return groupNumbersOfStudents;
         }

@@ -1,9 +1,9 @@
 ﻿using NsauTimetable.Parser.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 
 namespace NsauTimetable.Parser
 {
@@ -27,8 +27,8 @@ namespace NsauTimetable.Parser
 
             string fileName =
                 @"C:\dev\Xamarin\NsauTimetable\NsauTimetable.Parser.Debug\bin\Debug\netcoreapp3.1\TimetablesFiles\1101_10_time_15_04_2020_08_38_03_558.xls";
-            var timetableFileParser = new TimetableFileParser();
-            timetableFileParser.ParseExcelFile(fileName);
+            
+            ParseFileOfTimetable(fileName);
         }
 
         private static void ParseFileOfTimetable(string fileName)
@@ -36,7 +36,14 @@ namespace NsauTimetable.Parser
             ConsoleHelper.Write("File downloaded: " + fileName);
 
             var timetableFileParser = new TimetableFileParser();
-            timetableFileParser.ParseExcelFile(fileName);
+            List<Models.TimetableModel> timetables = timetableFileParser.ParseExcelFile(fileName);
+
+            string json = JsonSerializer.Serialize(timetables, new JsonSerializerOptions()
+            {
+                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All)
+            });
+
+            Console.WriteLine(json);
         }
     }
 }
