@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 
-namespace NsauTimetable.Parser.Models
+namespace NsauTimetable.Parser.Models.ExcelParsedModels
 {
-    public class TimetableModel
+    public class TimetableInfo
     {
         public string SheetTitle { get; set; }
         public List<string> Groups { get; set; }
-        public List<SubjectModel> Subjects { get; set; }
+        public List<SubjectInfo> Subjects { get; set; }
     }
 }

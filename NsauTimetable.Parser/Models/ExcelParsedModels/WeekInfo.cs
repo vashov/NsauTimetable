@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace NsauTimetable.Parser.Models.ExcelParseInfo
+namespace NsauTimetable.Parser.Models.ExcelParsedModels
 {
     public class WeekInfo
     {
@@ -8,7 +8,7 @@ namespace NsauTimetable.Parser.Models.ExcelParseInfo
         /// Contains subject title or from-to-time
         /// </summary>
         public string SubjectSection { get; set; }
-        public List<DayInfo> Days { get; set; }
+        public List<SchoolDayInfo> Days { get; set; }
         public string TeachersSection { get; set; }
     }
 }

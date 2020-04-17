@@ -1,6 +1,6 @@
 ﻿using NsauTimetable.Parser.Helpers;
 
-namespace NsauTimetable.Parser.Models.ExcelParseInfo
+namespace NsauTimetable.Parser.Models.ExcelParsedModels
 {
     public class PeriodInfo
     {

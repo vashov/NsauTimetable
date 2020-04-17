@@ -1,4 +1,5 @@
 ﻿using NsauTimetable.Parser.Helpers;
+using NsauTimetable.Parser.Models.ExcelParsedModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,7 @@ namespace NsauTimetable.Parser
             ConsoleHelper.Write("File downloaded: " + fileName);
 
             var timetableFileParser = new TimetableFileParser();
-            List<Models.TimetableModel> timetables = timetableFileParser.ParseExcelFile(fileName);
+            List<TimetableInfo> timetables = timetableFileParser.ParseExcelFile(fileName);
 
             string json = JsonSerializer.Serialize(timetables, new JsonSerializerOptions()
             {

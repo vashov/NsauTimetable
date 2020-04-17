@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 
-namespace NsauTimetable.Parser.Models
+namespace NsauTimetable.Parser.Models.ExcelParsedModels
 {
-    public class SubjectModel
+    public class SubjectInfo
     {
         public string Title { get; set; }
         public string Teachers { get; set; }
         public string FromToLecture { get; set; }
         public string FromToPractice { get; set; }
 
-        public List<SchoolDay> Days { get; set; }
+        public List<SchoolDayInfo> Days { get; set; }
     }
 }

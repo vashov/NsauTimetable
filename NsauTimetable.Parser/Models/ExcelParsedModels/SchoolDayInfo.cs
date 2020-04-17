@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NsauTimetable.Parser.Models.ExcelParseInfo
+namespace NsauTimetable.Parser.Models.ExcelParsedModels
 {
-    public class DayInfo
+    public class SchoolDayInfo
     {
         public DayOfWeek Day { get; set; }
+        public bool IsDayOfEvenWeek { get; set; }
         public List<PeriodInfo> Periods { get; set; }
     }
 }

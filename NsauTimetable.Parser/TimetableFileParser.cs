@@ -1,7 +1,6 @@
 ﻿using ExcelDataReader;
 using NsauTimetable.Parser.Helpers;
-using NsauTimetable.Parser.Models;
-using NsauTimetable.Parser.Models.ExcelParseInfo;
+using NsauTimetable.Parser.Models.ExcelParsedModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,11 +14,11 @@ namespace NsauTimetable.Parser
         private const int SubjectSectionWidth = 4;
         private readonly int[] _skipThisRows = { 1, 3, 4, 5 };
         
-        public List<TimetableModel> ParseExcelFile(string fileName)
+        public List<TimetableInfo> ParseExcelFile(string fileName)
         {
             ConsoleHelper.HorizontalLine();
 
-            var timetables = new List<TimetableModel>();
+            var timetables = new List<TimetableInfo>();
 
             using (var stream = File.Open(fileName, FileMode.Open, FileAccess.Read))
             {
@@ -34,15 +33,15 @@ namespace NsauTimetable.Parser
                             continue;
                         }
 
-                        var timetable = new TimetableModel()
+                        var timetable = new TimetableInfo()
                         {
                             SheetTitle = reader.Name,
-                            Subjects = new List<SubjectModel>()
+                            Subjects = new List<SubjectInfo>()
                         };
 
                         ParseHeader(reader, timetable);
 
-                        SubjectModel subject = null;
+                        SubjectInfo subject = null;
                         do
                         {
                             subject = ParseRowsOfSubject(reader);
@@ -65,7 +64,7 @@ namespace NsauTimetable.Parser
             return timetables;
         }
 
-        private void ParseHeader(IExcelDataReader reader, TimetableModel timetable)
+        private void ParseHeader(IExcelDataReader reader, TimetableInfo timetable)
         {
             const int headerHeight = 5;
 
@@ -86,11 +85,11 @@ namespace NsauTimetable.Parser
         /// <summary>
         /// Return null if there are no more subjects
         /// </summary>
-        private SubjectModel ParseRowsOfSubject(IExcelDataReader reader)
+        private SubjectInfo ParseRowsOfSubject(IExcelDataReader reader)
         {
-            var subject = new SubjectModel()
+            var subject = new SubjectInfo()
             {
-                Days = new List<SchoolDay>()
+                Days = new List<SchoolDayInfo>()
             };
 
             const int weekCount = 2;
@@ -115,27 +114,20 @@ namespace NsauTimetable.Parser
                     subject.Teachers = weekInfo.TeachersSection;
                 }
 
-                foreach (DayInfo day in weekInfo.Days)
-                {
-                    subject.Days.Add(new SchoolDay
-                    {
-                        Day = day.Day,
-                        IsDayOfEvenWeek = isEvenWeek,
-                        Periods = day.Periods
-                    });
-                }
+                weekInfo.Days.ForEach(d => d.IsDayOfEvenWeek = isEvenWeek);
+                subject.Days.AddRange(weekInfo.Days);
             }
 
             return subject;
         }
 
-        private void FillFromTo(SubjectModel subject, string fromToShared)
+        private void FillFromTo(SubjectInfo subject, string fromToShared)
         {
             string pattern = "\\s*\\.*\\s*с\\s*\\d*\\.\\d*\\s*по\\s*\\d*\\.\\d*";
             string patternLecture = "л" + pattern;
             string patternPractice = "пр" + pattern;
-            Match lecture = Regex.Match(fromToShared, patternLecture);
-            Match practice = Regex.Match(fromToShared, patternPractice);
+            Match lecture = Regex.Match(fromToShared, patternLecture, RegexOptions.IgnoreCase);
+            Match practice = Regex.Match(fromToShared, patternPractice, RegexOptions.IgnoreCase);
 
             subject.FromToLecture = lecture.Value;
             subject.FromToPractice = practice.Value;
@@ -165,7 +157,7 @@ namespace NsauTimetable.Parser
                 }
                 else
                 {
-                    foreach (DayInfo day in weekInfo.Days)
+                    foreach (SchoolDayInfo day in weekInfo.Days)
                     {
                         foreach (PeriodInfo period in day.Periods)
                         {
@@ -212,7 +204,7 @@ namespace NsauTimetable.Parser
 
             var weekRowInfo = new WeekInfo()
             {
-                Days = new List<DayInfo>()
+                Days = new List<SchoolDayInfo>()
             };
 
             int subjectTitleColumn = 1;
@@ -226,7 +218,7 @@ namespace NsauTimetable.Parser
             {
                 List<PeriodInfo> periods = ParseSchoolDay(reader, day, isUpperRowOfWeek);
 
-                weekRowInfo.Days.Add(new DayInfo
+                weekRowInfo.Days.Add(new SchoolDayInfo
                 {
                     Day = day,
                     Periods = periods
@@ -321,7 +313,7 @@ namespace NsauTimetable.Parser
             string regexLabel = "groupsOfStudents";
             string groupNumbersPattern = $"\\s+гр\\s*\\.*\\s*(?<{regexLabel}>(\\d+)(\\s*,+\\s*\\d+)*)";
 
-            Match match = Regex.Match(str, groupNumbersPattern);
+            Match match = Regex.Match(str, groupNumbersPattern, RegexOptions.IgnoreCase);
 
             Group regexGroup = match.Groups[regexLabel];
             List<string> groupNumbersOfStudents = 
