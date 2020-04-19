@@ -2,7 +2,7 @@
 
 namespace NsauT.Web.Parser.Models.ExcelParsedModels
 {
-    public class PeriodInfo
+    internal class PeriodInfo
     {
         public PeriodNumber Number { get; set; }
         public string UpperInfo { get; set; }

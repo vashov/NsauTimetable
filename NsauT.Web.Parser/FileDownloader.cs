@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace NsauT.Web.Parser
 {
-    public class FileDownloader
+    internal class FileDownloader
     {
         private const string InvalidPattern = @"[^\w]+";
         private const string XlsExtension = "xls";

@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace NsauT.Web.Parser
 {
-    public class BusinessModelMapper
+    internal class BusinessModelMapper
     {
         public List<TimetableModel> Map(List<TimetableInfo> parsedTimetables)
         {
@@ -26,12 +26,15 @@ namespace NsauT.Web.Parser
         {
             var timetable = new TimetableModel();
 
+            timetable.TimetableId = CreateTimetableId(parsedTimetable.Groups);
             timetable.SheetTitle = parsedTimetable.SheetTitle;
             timetable.Groups = parsedTimetable.Groups;
             timetable.Subjects = MapSubjects(parsedTimetable.Subjects);
 
             return timetable;
         }
+
+        private string CreateTimetableId(IEnumerable<string> groups) => string.Join(",", groups);
 
         private List<SubjectModel> MapSubjects(List<SubjectInfo> parsedSubjects)
         {

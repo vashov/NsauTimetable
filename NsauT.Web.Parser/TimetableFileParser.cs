@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace NsauT.Web.Parser
 {
-    public class TimetableFileParser
+    internal class TimetableFileParser
     {
         private const int SubjectSectionWidth = 4;
         private readonly int[] _skipThisRows = { 1, 3, 4, 5 };

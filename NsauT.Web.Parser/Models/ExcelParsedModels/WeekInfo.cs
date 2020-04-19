@@ -2,7 +2,7 @@
 
 namespace NsauT.Web.Parser.Models.ExcelParsedModels
 {
-    public class WeekInfo
+    internal class WeekInfo
     {
         /// <summary>
         /// Contains subject title or from-to-time

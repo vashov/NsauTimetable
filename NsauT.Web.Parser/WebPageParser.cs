@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace NsauT.Web.Parser
 {
-    public class WebPageParser
+    internal class WebPageParser
     {
         private const string NsauTimetablePageUrl = "https://nsau.edu.ru/student/timetable/";
         private const string GroupLink = "link";

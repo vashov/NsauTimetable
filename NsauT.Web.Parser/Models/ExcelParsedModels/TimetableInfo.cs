@@ -2,7 +2,7 @@
 
 namespace NsauT.Web.Parser.Models.ExcelParsedModels
 {
-    public class TimetableInfo
+    internal class TimetableInfo
     {
         public string SheetTitle { get; set; }
         public List<string> Groups { get; set; }

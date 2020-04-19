@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace NsauT.Web.Parser.Models.ExcelParsedModels
 {
-    public class SchoolDayInfo
+    internal class SchoolDayInfo
     {
         public DayOfWeek Day { get; set; }
         public bool IsDayOfEvenWeek { get; set; }

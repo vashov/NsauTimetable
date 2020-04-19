@@ -2,7 +2,7 @@
 
 namespace NsauT.Web.Parser.Models.ExcelParsedModels
 {
-    public class SubjectInfo
+    internal class SubjectInfo
     {
         public string Title { get; set; }
         public string Teachers { get; set; }

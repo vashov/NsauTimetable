@@ -1,38 +1,36 @@
-﻿using NsauT.Shared.Converters;
-using NsauT.Shared.Models.BusinessModels;
-using System;
+﻿using NsauT.Web.DAL.DataStore;
+using NsauT.Web.DAL.Models;
 using System.Collections.Generic;
-using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace NsauT.Web.Checker
 {
-    public class TimetableChecker
+    internal class TimetableChecker
     {
-        public void CheckTimetables(IEnumerable<TimetableModel> timetableModels)
+        public bool CheckNeedUpdateTimetable(TimetableEntity timetable, string newHash)
         {
-            foreach (TimetableModel timetable in timetableModels)
-            {
-                CheckOneTimetable(timetable);
-            }
+            return EqualityComparer<string>.Default.Equals(timetable.Hash, newHash);
         }
 
-        private void CheckOneTimetable(TimetableModel timetable)
+        public async Task<bool> TryUpdateTimetableAsync(IRepository<TimetableEntity> repository, 
+            TimetableEntity timetableEntity, string jsonTimetable, string hash)
         {
-            Console.WriteLine("Check: " + timetable.SheetTitle + " | Groups: " + string.Join(", ", timetable.Groups));
+            timetableEntity.Hash = hash;
+            timetableEntity.Timetable = jsonTimetable;
+            return await repository.UpdateItemAsync(timetableEntity);
         }
 
-        private string Serialize(object o)
+        public async Task<bool> TryAddTimetableAsync(IRepository<TimetableEntity> repository, string timetableId,
+            string hash, string jsonTimetable)
         {
-            var jsonOptions = new JsonSerializerOptions
+            var timetable = new TimetableEntity
             {
-                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All)
+                Id = timetableId,
+                Hash = hash,
+                Timetable = jsonTimetable
             };
-            jsonOptions.Converters.Add(new DateWithoutTimeConverter());
-            jsonOptions.Converters.Add(new PeriodOptionConverter());
 
-            string json = JsonSerializer.Serialize(o, jsonOptions);
-
-            return json;
+            return await repository.AddItemAsync(timetable);
         }
     }
 }
