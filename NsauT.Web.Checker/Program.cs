@@ -1,12 +1,13 @@
 ﻿using Microsoft.Extensions.Configuration;
-using NsauT.Shared;
 using NsauT.Shared.Models.BusinessModels;
+using NsauT.Shared.Tools;
 using NsauT.Web.DAL.DataStore;
 using NsauT.Web.DAL.Models;
 using NsauT.Web.Parser;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace NsauT.Web.Checker
 {
@@ -24,8 +25,12 @@ namespace NsauT.Web.Checker
 
             var parser = new ParserWorker();
             parser.TimetableFileParsed += StartCheckTimetables;
-            parser.StartParse();
+
+            bool downloadOnlyFirstTimetable = IsTestRun(args);
+            parser.StartParse(downloadOnlyFirstTimetable);
         }
+
+        private static bool IsTestRun(string[] args) => args.Contains("-test");
 
         private static IConfigurationRoot GetConfiguration()
         {

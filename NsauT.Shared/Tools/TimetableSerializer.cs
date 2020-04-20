@@ -2,7 +2,7 @@
 using NsauT.Shared.Models.BusinessModels;
 using System.Text.Json;
 
-namespace NsauT.Shared
+namespace NsauT.Shared.Tools
 {
     public class TimetableSerializer
     {
