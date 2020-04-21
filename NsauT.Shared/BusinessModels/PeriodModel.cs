@@ -1,6 +1,6 @@
 ﻿using NsauT.Shared.Helpers;
 
-namespace NsauT.Shared.Models.BusinessModels
+namespace NsauT.Shared.BusinessModels
 {
     public class PeriodModel
     {

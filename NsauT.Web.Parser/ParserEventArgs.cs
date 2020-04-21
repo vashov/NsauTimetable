@@ -1,4 +1,4 @@
-﻿using NsauT.Shared.Models.BusinessModels;
+﻿using NsauT.Shared.BusinessModels;
 using System;
 using System.Collections.Generic;
 

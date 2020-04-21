@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NsauT.Shared.Models.BusinessModels
+namespace NsauT.Shared.BusinessModels
 {
     public enum PeriodOption
     {

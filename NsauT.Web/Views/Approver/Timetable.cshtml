@@ -1,0 +1,52 @@
+﻿@using NsauT.Web.DAL.Models;
+@model TimetableEntity;
+
+@{
+    ViewData["Title"] = "Timetable";
+}
+
+<h1>ID: @Model.Id</h1>
+<p>
+    Key: @Model.Key
+</p>
+
+<p>
+    <span>Группы:</span><br />
+    <ul>
+        @foreach (GroupEntity group in Model.Groups)
+        {
+            <li>@group.Number</li>
+        }
+    </ul>
+</p>
+
+<br />
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Проверен</th>
+            <th>Предмет</th>
+            <th>Преподаватели</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (SubjectEntity subject in Model.Subjects)
+        {
+        <tr>
+            @if (subject.IsApproved)
+            {
+                <td>"Да"</td>
+            }
+            else
+            {
+                <td>"Нет"</td>
+            }
+            <td><a asp-controller="Subjects" asp-action="Subject" asp-route-id="@subject.Id">@subject.Title</a></td>
+            <td>@subject.Teachers</td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+

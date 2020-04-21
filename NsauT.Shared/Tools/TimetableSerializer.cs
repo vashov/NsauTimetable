@@ -1,5 +1,5 @@
 ﻿using NsauT.Shared.Converters;
-using NsauT.Shared.Models.BusinessModels;
+using NsauT.Shared.BusinessModels;
 using System.Text.Json;
 
 namespace NsauT.Shared.Tools

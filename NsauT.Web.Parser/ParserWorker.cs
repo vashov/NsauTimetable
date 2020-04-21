@@ -1,5 +1,5 @@
-﻿using NsauT.Shared.Helpers;
-using NsauT.Shared.Models.BusinessModels;
+﻿using NsauT.Shared.BusinessModels;
+using NsauT.Shared.Helpers;
 using NsauT.Web.Parser.Models.ExcelParsedModels;
 using System;
 using System.Collections.Generic;

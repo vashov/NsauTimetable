@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace NsauT.Web.DAL.Models
 {
@@ -7,11 +7,16 @@ namespace NsauT.Web.DAL.Models
     {
         [Key]
         [Required]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public string Id { get; set; }
+        public int Id { get; set; }
+
+        [Required]
+        public string Key { get; set; }
         
         [Required]
-        public string Timetable { get; set; }
+        public List<SubjectEntity> Subjects { get; set; }
+
+        [Required]
+        public List<GroupEntity> Groups { get; set; }
 
         [Required]
         public string Hash { get; set; }

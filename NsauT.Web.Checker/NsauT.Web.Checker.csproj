@@ -16,4 +16,10 @@
     <ProjectReference Include="..\NsauT.Web.Parser\NsauT.Web.Parser.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="checkersettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -1,5 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
-using NsauT.Shared.Models.BusinessModels;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using NsauT.Shared.BusinessModels;
 using NsauT.Shared.Tools;
 using NsauT.Web.DAL.DataStore;
 using NsauT.Web.DAL.Models;
@@ -40,7 +41,7 @@ namespace NsauT.Web.Checker
                 .Build();
         }
 
-        private async static void StartCheckTimetables(object sender, EventArgs e)
+        private static void StartCheckTimetables(object sender, EventArgs e)
         {
             var parserArgs = e as ParserEventArgs;
             var timetableChecker = new TimetableChecker();
@@ -49,37 +50,31 @@ namespace NsauT.Web.Checker
 
             List<TimetableModel> timetables = parserArgs.Timetables;
 
-            using (var reporitory = new TimetableRepository(ConnectionString))
+            DbContextOptions options = new DbContextOptionsBuilder().UseNpgsql(ConnectionString).Options;
+            using (var context = new TimetableContext(options))
             {
                 foreach (TimetableModel timetable in timetables)
                 {
                     string jsonTimetable = timetableSerializer.SerializeToJson(timetable);
                     string hash = hashCoder.GetSha256Hash(jsonTimetable);
 
-                    TimetableEntity timetableEntity = await reporitory.GetItemAsync(timetable.TimetableId);
+                    TimetableEntity timetableEntity = context.Timetables
+                        .FirstOrDefault(t => t.Key == timetable.Key);
 
                     if (timetableEntity == null)
                     {
-                        bool timetableAdded = await timetableChecker
-                            .TryAddTimetableAsync(reporitory, timetable.TimetableId, hash, jsonTimetable);
+                        timetableChecker.AddTimetable(context, timetable, hash);
 
                         // if (added) need notify?
                         continue;
                     }
 
-                    if (!timetableChecker.CheckNeedUpdateTimetable(timetableEntity, hash))
+                    if (timetableChecker.IsSameTimetable(timetableEntity, hash))
                     {
                         continue;
                     }
 
-                    bool updated = await timetableChecker
-                        .TryUpdateTimetableAsync(reporitory, timetableEntity, jsonTimetable, hash);
-
-                    if (!updated)
-                    {
-                        continue;
-                    }
-
+                    timetableChecker.UpdateTimetable(context, timetableEntity, timetable, hash);
                     // if (updated) need notify?
                 }
             }

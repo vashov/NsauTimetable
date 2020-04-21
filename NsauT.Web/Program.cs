@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace NsauT.Client.Web
+namespace NsauT.Web
 {
     public class Program
     {

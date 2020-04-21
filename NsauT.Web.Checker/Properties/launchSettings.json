@@ -1,7 +1,8 @@
 {
   "profiles": {
     "NsauT.Web.Checker": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "-test"
     }
   }
 }
