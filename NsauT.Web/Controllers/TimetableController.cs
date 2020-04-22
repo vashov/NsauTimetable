@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NsauT.Web.DAL.DataStore;
 using NsauT.Web.DAL.Models;
+using NsauT.Web.Models;
 
 namespace NsauT.Web.Controllers
 {
@@ -38,6 +39,20 @@ namespace NsauT.Web.Controllers
                 return NotFound();
 
             return timetable;
+        }
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<IEnumerable<TimetableInfoViewModel>> Groups()
+        {
+            List<TimetableInfoViewModel> infos = _context.Timetables
+                .Select(t => new TimetableInfoViewModel
+                {
+                    Id = t.Id,
+                    Key = t.Key
+                })
+                .ToList();
+            return infos;
         }
 
         //[HttpPost]

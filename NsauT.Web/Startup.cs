@@ -46,7 +46,7 @@ namespace NsauT.Web
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Approver}/{action=Timetables}/{id?}"
+                    pattern: "{controller=approver}/{action=timetables}/{id?}"
                     );
                 //endpoints.MapControllers();
             });

@@ -1,0 +1,46 @@
+﻿@model NsauT.Web.Models.PeriodViewModel
+
+@{
+    ViewData["Title"] = "Period";
+}
+
+<h5>Пара</h5>
+<div class="row">
+    <form class="col-4" asp-action="period" asp-route-id="@Model.PeriodId" asp-route-dayId="@Model.DayId" method="post">
+        <div class="form-group">
+            <label for="Number">Номер:</label>
+            <select class="form-control" asp-for="Period.Number" asp-items="@ViewBag.PeriodNumbers"></select>
+        </div>
+
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" asp-for="Period.IsLecture" />
+            <label class="form-check-label" for="IsLecture">Лекция</label>
+        </div>
+
+        <div class="form-group">
+            <label for="Cabinet">Кабинет:</label>
+            <input class="form-control" type="text" asp-for="Period.Cabinet" />
+        </div>
+
+        <div class="form-group">
+            <label for="Subgroup">Подгруппа:</label>
+            <input class="form-control" type="text" asp-for="Period.Subgroup" />
+        </div>
+
+        <div class="form-group">
+            <label for="Option">Доп. условие:</label>
+            <select class="form-control" asp-for="Period.Option" asp-items="@ViewBag.PeriodOptions"></select>
+        </div>
+
+        <div class="form-group">
+            <label for="OptionDate">Доп. дата:</label>
+            <input class="form-control" type="date" asp-for="Period.OptionDate" />
+        </div>
+
+        <div class="form-group">
+            <label for="OptionCabinet">Доп. кабинет:</label>
+            <input class="form-control" type="text" asp-for="Period.OptionCabinet" />
+        </div>
+        <button class="btn btn-primary" type="submit">Обновить</button>
+    </form>
+</div>

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
@@ -7,11 +7,6 @@
   <ItemGroup>
     <ProjectReference Include="..\NsauT.Shared\NsauT.Shared.csproj" />
     <ProjectReference Include="..\NsauT.Web.DAL\NsauT.Web.DAL.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Views\SchoolDays\" />
-    <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>

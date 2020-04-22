@@ -5,7 +5,7 @@
     ViewData["Title"] = "Timetable";
 }
 
-<h1>ID: @Model.Id</h1>
+<h5>ID: @Model.Id</h5>
 <p>
     Key: @Model.Key
 </p>
@@ -22,8 +22,8 @@
 
 <br />
 
-<table border="1">
-    <thead>
+<table class="table table-bordered table-hover">
+    <thead class="thead-dark">
         <tr>
             <th>Проверен</th>
             <th>Предмет</th>
@@ -34,15 +34,8 @@
         @foreach (SubjectEntity subject in Model.Subjects)
         {
         <tr>
-            @if (subject.IsApproved)
-            {
-                <td>"Да"</td>
-            }
-            else
-            {
-                <td>"Нет"</td>
-            }
-            <td><a asp-controller="Subjects" asp-action="Subject" asp-route-id="@subject.Id">@subject.Title</a></td>
+            <td>@(subject.IsApproved ? "Да" : "Нет")</td>
+            <td><a asp-action="subject" asp-route-id="@subject.Id">@subject.Title</a></td>
             <td>@subject.Teachers</td>
         </tr>
         }

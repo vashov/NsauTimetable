@@ -1,26 +1,29 @@
 ﻿@using NsauT.Web.Models
-@model List<TimetableInfo>;
+@model List<TimetableInfoViewModel>;
 
 @{
     ViewData["Title"] = "Timetables";
 }
 
-<h1>Расписание</h1>
+<h5>Расписание</h5>
 
-<ul>
-    @foreach(TimetableInfo info in Model)
+<table class="table table-bordered table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th>Проверено</th>
+            <th>Занятия проверены</th>
+            <th>Группы</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+    @foreach(TimetableInfoViewModel info in Model)
     {
-    <li>
-        <a asp-action="Timetable" asp-route-id="@info.Id">@info.Key</a>
-        @if (info.IsApproved)
-        {
-            <span>Проверено</span>
-        }
-        else
-        {
-            <span>Не проверено</span>
-        }
-    </li>
+        <tr>
+            <td>@(info.IsApproved ? "Да" : "Нет")</td>
+            <td>@info.SubjectsApproved / @info.SubjectsAmount</td>
+            <td><a asp-action="timetable" asp-route-id="@info.Id">@info.Key</a></td>
+        </tr>
     }
-</ul>
+</table>
 

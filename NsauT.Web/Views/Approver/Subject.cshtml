@@ -1,0 +1,51 @@
+﻿@using NsauT.Web.DAL.Models;
+@model SubjectEntity
+
+@{
+    ViewData["Title"] = "Subject";
+}
+
+<h5>@Model.Title</h5>
+<div>
+    @Model.Teachers
+</div>
+
+@foreach (SchoolDayEntity day in Model.Days.OrderBy(d => d.Day).ThenBy(d => d.IsDayOfEvenWeek))
+{
+<div>@day.Day - @(day.IsDayOfEvenWeek ? "Четная" : "Нечетная") @(day.IsApproved ? "- Проверен" : "")</div>
+<table class="table table-bordered table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th>Проверена</th>
+            <th>Номер пары</th>
+            <th>Лекция</th>
+            <th>Подгруппа</th>
+            <th>Кабинет</th>
+            <th>*Особое</th>
+            <th>*Дата</th>
+            <th>*Кабинет</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (PeriodEntity period in day.Periods.OrderBy(p => p.Number))
+    {
+        <tr>
+            <td>@(period.IsApproved ? "Да" : "Нет")</td>
+            <td>@period.Number</td>
+            <td>@(period.IsLecture ? "Да" : "Нет")</td>
+            <td>@period.Subgroup</td>
+            <td>@period.Cabinet</td>
+            <td>@period.Option</td>
+            <td>@period.OptionDate</td>
+            <td>@period.OptionCabinet</td>
+            <td><a asp-action="period" asp-route-id="@period.Id" asp-route-dayId="@day.Id" class="btn btn-outline-primary btn-sm">Редактировать</a></td>
+            <td><a asp-action="deleteperiod" asp-route-id="@period.Id" class="btn btn-outline-danger btn-sm">Удалить</a></td>
+        </tr>
+    }
+    </tbody>
+</table>
+<a class="btn btn-outline-primary btn-sm" asp-action="period">Добавить пару</a>
+<br /><br /><br />
+}
