@@ -1,5 +1,4 @@
-﻿using NsauT.Shared.BusinessModels;
-using NsauT.Shared.Helpers;
+﻿using NsauT.Shared.Enums;
 using System;
 using System.ComponentModel.DataAnnotations;
 

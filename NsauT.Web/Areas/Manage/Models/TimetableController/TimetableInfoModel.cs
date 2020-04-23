@@ -1,6 +1,6 @@
-﻿namespace NsauT.Web.Models
+﻿namespace NsauT.Web.Areas.Manage.Models.TimetableController
 {
-    public class TimetableInfoViewModel
+    public class TimetableInfoModel
     {
         public int Id { get; set; }
         public string Key { get; set; }

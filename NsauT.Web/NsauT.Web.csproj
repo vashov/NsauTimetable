@@ -14,4 +14,12 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\Api\Models\" />
+    <Folder Include="Areas\Manage\Views\SchoolDay\" />
+    <Folder Include="Controllers\" />
+    <Folder Include="Models\" />
+    <Folder Include="Tools\" />
+  </ItemGroup>
+
 </Project>

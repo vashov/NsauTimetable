@@ -1,4 +1,4 @@
-﻿using NsauT.Shared.Helpers;
+﻿using NsauT.Shared.Enums;
 
 namespace NsauT.Shared.BusinessModels
 {

@@ -1,4 +1,5 @@
 ﻿using ExcelDataReader;
+using NsauT.Shared.Enums;
 using NsauT.Shared.Helpers;
 using NsauT.Web.Parser.Models.ExcelParsedModels;
 using System;

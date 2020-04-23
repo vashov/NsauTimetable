@@ -44,10 +44,16 @@ namespace NsauT.Web
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=approver}/{action=timetables}/{id?}"
+                endpoints.MapAreaControllerRoute(
+                    name: "manage_area",
+                    areaName: "manage",
+                    pattern: "manage/{controller=timetable}/{action=timetables}/{id?}"
                     );
+
+                //endpoints.MapControllerRoute(
+                //    name: "default",
+                //    pattern: "{controller=approver}/{action=timetables}/{id?}"
+                //    );
                 //endpoints.MapControllers();
             });
         }

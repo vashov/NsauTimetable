@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using NsauT.Shared.Helpers;
+using NsauT.Shared.Enums;
 using System;
 using System.ComponentModel;
 
-namespace NsauT.Web.Helpers
+namespace NsauT.Web.Areas.Manage.Helpers
 {
     public static class PeriodNumbersHelper
     {
@@ -45,7 +45,7 @@ namespace NsauT.Web.Helpers
             }
         }
 
-        private static string ConvertPeriodNumberToString(PeriodNumber periodNumber)
+        public static string ConvertPeriodNumberToString(PeriodNumber periodNumber)
         {
             switch (periodNumber)
             {

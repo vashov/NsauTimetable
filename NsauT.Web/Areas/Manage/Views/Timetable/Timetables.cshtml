@@ -1,0 +1,29 @@
+﻿@using NsauT.Web.Areas.Manage.Models.TimetableController
+@model List<TimetableInfoModel>
+
+@{
+    ViewData["Title"] = "Timetables";
+}
+
+<h5>Расписание</h5>
+
+<table class="table table-bordered table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th>Проверено</th>
+            <th>Занятия проверены</th>
+            <th>Группы</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+    @foreach(TimetableInfoModel timetable in Model)
+    {
+        <tr>
+            <td><img src="~/images/@(timetable.IsApproved ? "check-3x.png" : "x-3x.png")" alt="@(timetable.IsApproved ? "Да" : "Нет")" /></td>
+            <td>@timetable.SubjectsApproved / @timetable.SubjectsAmount</td>
+            <td><a asp-action="timetable" asp-route-id="@timetable.Id">@timetable.Key</a></td>
+        </tr>
+    }
+</table>
+

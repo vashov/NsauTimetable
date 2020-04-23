@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using NsauT.Shared.BusinessModels;
+using NsauT.Shared.Enums;
 using System;
 using System.ComponentModel;
 
-namespace NsauT.Web.Helpers
+namespace NsauT.Web.Areas.Manage.Helpers
 {
     public class PeriodOptionsHelper
     {
@@ -42,7 +42,7 @@ namespace NsauT.Web.Helpers
             }
         }
 
-        private static string ConvertPeriodOptionToString(PeriodOption periodOption)
+        public static string ConvertPeriodOptionToString(PeriodOption periodOption)
         {
             switch (periodOption)
             {

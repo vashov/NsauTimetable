@@ -1,0 +1,49 @@
+﻿@model NsauT.Web.Areas.Manage.Models.PeriodController.PeriodViewModel
+
+@{
+    ViewData["Title"] = "Period";
+}
+
+<h5>@(Model.PeriodId != null ? "Редактирование " : "Создание новой ")пары</h5>
+<div class="row">
+    <form class="col-4" asp-action="period" asp-route-id="@Model.PeriodId" asp-route-dayId="@Model.DayId" method="post">
+        <div class="form-group">
+            <label for="Period.Number">Номер:</label>
+            <select class="form-control" asp-for="Period.Number" asp-items="@Model.NumbersList"></select>
+        </div>
+
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" asp-for="Period.IsLecture" />
+            <label class="form-check-label" for="Period.IsLecture">Лекция</label>
+        </div>
+
+        <div class="form-group">
+            <label for="Period.Cabinet">Кабинет:</label>
+            <input class="form-control" type="text" asp-for="Period.Cabinet" />
+        </div>
+
+        <div class="form-group">
+            <label for="Period.Subgroup">Подгруппа:</label>
+            <input class="form-control" type="text" asp-for="Period.Subgroup" />
+            @*<span asp-validation-for="Period.Subgroup"></span>*@
+        </div>
+
+        <div class="form-group">
+            <label for="Period.Option">Доп. условие:</label>
+            <select class="form-control" asp-for="Period.Option" asp-items="@Model.OptionsList"></select>
+            @*<span asp-validation-for="Period.Option"></span>*@
+        </div>
+
+        <div class="form-group">
+            <label for="Period.OptionDate">Доп. дата:</label>
+            <input class="form-control" type="date" asp-for="Period.OptionDate" />
+        </div>
+
+        <div class="form-group">
+            <label for="Period.OptionCabinet">Доп. кабинет:</label>
+            <input class="form-control" type="text" asp-for="Period.OptionCabinet" />
+        </div>
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <button class="btn btn-primary" type="submit">@(Model.PeriodId != null ? "Обновить" : "Создать")</button>
+    </form>
+</div>
