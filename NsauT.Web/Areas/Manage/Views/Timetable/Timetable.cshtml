@@ -1,0 +1,44 @@
+﻿@using NsauT.Web.Areas.Manage.Models.TimetableController
+@model TimetableModel
+
+@{
+    ViewData["Title"] = "Timetable";
+}
+
+<p>
+    Key: @Model.Key
+</p>
+
+<p>
+    <span>Группы:</span><br />
+    <ul>
+        @foreach (string group in Model.Groups)
+        {
+            <li>@group</li>
+        }
+    </ul>
+</p>
+
+<br />
+
+<table class="table table-bordered table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th>Проверен</th>
+            <th>Предмет</th>
+            <th>Преподаватели</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (SubjectModel subject in Model.Subjects)
+        {
+        <tr>
+            <td><img src="~/images/@(subject.IsApproved ? "check-3x.png" : "x-3x.png")" alt="@(subject.IsApproved ? "Да" : "Нет")" /></td>
+            <td><a asp-controller="subject" asp-action="subject" asp-route-id="@subject.Id">@subject.Title</a></td>
+            <td>@subject.Teachers</td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+

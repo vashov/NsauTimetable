@@ -1,4 +1,4 @@
-﻿using NsauT.Shared.Models.BusinessModels;
+﻿using NsauT.Shared.BusinessModels;
 using NsauT.Web.Parser.Models.ExcelParsedModels;
 using System;
 using System.Collections.Generic;
@@ -26,7 +26,7 @@ namespace NsauT.Web.Parser
         {
             var timetable = new TimetableModel();
 
-            timetable.TimetableId = CreateTimetableId(parsedTimetable.Groups);
+            timetable.Key = CreateTimetableId(parsedTimetable.Groups);
             timetable.SheetTitle = parsedTimetable.SheetTitle;
             timetable.Groups = parsedTimetable.Groups;
             timetable.Subjects = MapSubjects(parsedTimetable.Subjects);

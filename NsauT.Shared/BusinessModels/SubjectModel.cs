@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NsauT.Shared.Models.BusinessModels
+namespace NsauT.Shared.BusinessModels
 {
     public class SubjectModel
     {

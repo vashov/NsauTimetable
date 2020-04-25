@@ -1,17 +1,8 @@
-﻿using System;
+﻿using NsauT.Shared.Enums;
+using System;
 
 namespace NsauT.Shared.Helpers
 {
-    public enum PeriodNumber
-    {
-        First = 1,
-        Second = 2,
-        Third = 3,
-        Fourth = 4,
-        Fifth = 5,
-        Sixth = 6
-    }
-
     public static class PeriodHelper
     {
         public static PeriodNumber GetNextPeriodNumber(PeriodNumber periodNumber)
