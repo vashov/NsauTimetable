@@ -6,7 +6,8 @@
 
 <h5>@(Model.PeriodId != null ? "Редактирование " : "Создание новой ")пары</h5>
 <div class="row">
-    <form class="col-4" asp-action="period" asp-route-id="@Model.PeriodId" asp-route-dayId="@Model.DayId" method="post">
+    <form class="col-4" asp-action="period" asp-route-id="@Model.PeriodId" method="post">
+        <input type="hidden" asp-for="Period.SchoolDayId"/>
         <div class="form-group">
             <label for="Period.Number">Номер:</label>
             <select class="form-control" asp-for="Period.Number" asp-items="@Model.NumbersList"></select>

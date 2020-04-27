@@ -1,13 +1,16 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using NsauT.Web.BLL.Infrastructure;
+using NsauT.Web.BLL.Services.Period;
+using NsauT.Web.BLL.Services.SchoolDay;
+using NsauT.Web.BLL.Services.Subject;
+using NsauT.Web.BLL.Services.Timetable;
 using NsauT.Web.DAL.DataStore;
 
 namespace NsauT.Web
@@ -25,10 +28,23 @@ namespace NsauT.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            //services.AddControllers();
+
+            services.AddTransient<ITimetableService, TimetableService>();
+            services.AddTransient<ISubjectService, SubjectService>();
+            services.AddTransient<ISchoolDayService, SchoolDayService>();
+            services.AddTransient<IPeriodService, PeriodService>();
+            services.AddTransient<IApproverFacade, ApproverFacade>();
 
             string connectionString = Configuration.GetConnectionString("TimetableDatabase");
             services.AddDbContext<TimetableContext>(option => option.UseNpgsql(connectionString));
+
+            services.AddAutoMapper(typeof(Startup));
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(option =>
+                {
+                    option.LoginPath = new Microsoft.AspNetCore.Http.PathString("/account/login");
+                });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -42,6 +58,9 @@ namespace NsauT.Web
             app.UseHttpsRedirection();
             app.UseRouting();
 
+            app.UseAuthentication();    // аутентификация
+            app.UseAuthorization();     // авторизация
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapAreaControllerRoute(
@@ -50,10 +69,10 @@ namespace NsauT.Web
                     pattern: "manage/{controller=timetable}/{action=timetables}/{id?}"
                     );
 
-                //endpoints.MapControllerRoute(
-                //    name: "default",
-                //    pattern: "{controller=approver}/{action=timetables}/{id?}"
-                //    );
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=home}/{action=index}/{id?}"
+                    );
                 //endpoints.MapControllers();
             });
         }

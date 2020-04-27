@@ -1,37 +1,35 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using NsauT.Web.Areas.Manage.Helpers;
-using NsauT.Web.DAL.DataStore;
-using NsauT.Web.DAL.Models;
-using System.Linq;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using NsauT.Web.BLL.Services;
+using NsauT.Web.BLL.Services.SchoolDay;
 
 namespace NsauT.Web.Areas.Manage.Controllers
 {
-    [Area("manage")]
-    public class SchoolDayController : Controller
+    public class SchoolDayController : ManageController
     {
-        private TimetableContext _context;
+        private ISchoolDayService SchoolDayService { get; }
+        private IMapper Mapper { get; }
 
-        public SchoolDayController(TimetableContext context)
+        public SchoolDayController(ISchoolDayService schoolDayService, IMapper mapper)
         {
-            _context = context;
+            SchoolDayService = schoolDayService;
+            Mapper = mapper;
         }
 
         public IActionResult DeleteDay(int id)
         {
-            SchoolDayEntity day = _context.SchoolDays
-                .Include(d => d.Subject)
-                .FirstOrDefault(d => d.Id == id);
-            if (day == null)
+            ServiceResult serviceResult = SchoolDayService.DeleteDay(id);
+            if (serviceResult.Result == Result.NotFound)
             {
                 return NotFound();
             }
 
-            int subjectId = day.Subject.Id;
-            Approver.Create(_context).CascadeUpdateApprovedSubject(subjectId);
+            if (serviceResult.Result != Result.OK)
+            {
+                return BadRequest();
+            }
 
-            _context.SaveChanges();
-
+            int subjectId = serviceResult.Id;
             return RedirectToSubject(subjectId);
         }
 

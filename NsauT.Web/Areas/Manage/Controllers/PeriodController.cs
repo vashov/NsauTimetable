@@ -1,22 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using NsauT.Shared.Enums;
-using NsauT.Web.Areas.Manage.Helpers;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using NsauT.Web.Areas.Manage.Models.PeriodController;
-using NsauT.Web.DAL.DataStore;
-using NsauT.Web.DAL.Models;
-using System.Linq;
+using NsauT.Web.BLL.Services;
+using NsauT.Web.BLL.Services.Period;
+using NsauT.Web.BLL.Services.Period.DTO;
 
 namespace NsauT.Web.Areas.Manage.Controllers
 {
-    [Area("manage")]
-    public class PeriodController : Controller
+    public class PeriodController : ManageController
     {
-        private TimetableContext _context;
+        private IPeriodService PeriodService { get; }
+        private IMapper Mapper { get; }
 
-        public PeriodController(TimetableContext context)
+        public PeriodController(IPeriodService periodService, IMapper mapper)
         {
-            _context = context;
+            PeriodService = periodService;
+            Mapper = mapper;
         }
 
         [HttpGet]
@@ -26,164 +25,88 @@ namespace NsauT.Web.Areas.Manage.Controllers
             {
                 return BadRequest();
             }
-            if (id == null && dayId == 0)
-            {
-                return BadRequest();
-            }
 
-            PeriodEntity periodEntity = null;
-
+            PeriodDto periodDto;
             if (id != null)
             {
-                periodEntity = _context.Periods
-                    .AsNoTracking()
-                    .FirstOrDefault(t => t.Id == id);
-
-                if (periodEntity == null)
+                periodDto = PeriodService.GetPeriod(id.Value);
+                if (periodDto == null)
                 {
                     return NotFound();
                 }
             }
-
-            var periodViewModel = new PeriodViewModel(periodEntity, dayId);
-
-            if (id == null)
+            else
             {
-                return View(periodViewModel);
+                periodDto = new PeriodDto();
             }
 
-            if (periodEntity == null)
-            {
-                return NotFound();
-            }
+            var periodBindingModel = Mapper.Map<PeriodBindingModel>(periodDto);
+            var periodViewModel = new PeriodViewModel(periodBindingModel, id);
 
             return View(periodViewModel);
         }
 
         [HttpPost]
-        public IActionResult Period(int? id, [FromQuery] int dayId, [FromForm]PeriodBindingModel period)
+        public IActionResult Period(int? id, [FromForm]PeriodBindingModel period)
         {
-            if (dayId == 0)
+            if (period.SchoolDayId == 0)
             {
                 return BadRequest();
             }
 
-            PeriodNumber periodNumber = PeriodNumbersHelper.ConvertStringToPeriodNumber(period.Number);
-            PeriodOption periodOption = PeriodOptionsHelper.ConvertStringToPeriodOption(period.Option);
+            var periodDto = Mapper.Map<PeriodDto>(period);
+            //PeriodNumber periodNumber = PeriodNumbersHelper.ConvertStringToPeriodNumber(period.Number);
+            //PeriodOption periodOption = PeriodOptionsHelper.ConvertStringToPeriodOption(period.Option);
 
-            PeriodValidator.Create(ModelState).ValidateAndUpdateModelState(period, periodOption);
+            //PeriodValidator.Create(ModelState).ValidateAndUpdateModelState(period, periodOption);
 
-            if (!ModelState.IsValid)
+            ServiceResult serviceResult = PeriodService.AddOrUpdatePeriod(periodDto, id);
+
+            if (serviceResult.Result == Result.Error)
             {
-                var periodViewModel = new PeriodViewModel(period, id, dayId);
-                return View(periodViewModel);
-            }
-
-            PeriodEntity periodEntity = null;
-
-            if (id == null)
-            {
-                periodEntity = new PeriodEntity();
-            }
-            else
-            {
-                periodEntity = _context.Periods
-                    .FirstOrDefault(p => p.Id == id);
-
-                if (periodEntity == null)
+                foreach (var error in serviceResult.Errors)
                 {
-                    return NotFound();
-                }
-            }
-
-            periodEntity.Cabinet = period.Cabinet;
-            periodEntity.Number = periodNumber;
-            periodEntity.Subgroup = period.Subgroup;
-            periodEntity.IsLecture = period.IsLecture;
-            periodEntity.Option = periodOption;
-            periodEntity.OptionDate = period.OptionDate;
-            periodEntity.OptionCabinet = period.OptionCabinet;
-            periodEntity.IsApproved = true;
-
-            if (id == null)
-            {
-                SchoolDayEntity day = _context.SchoolDays
-                    .Include(d => d.Periods)
-                    .FirstOrDefault(d => d.Id == dayId);
-
-                if (day == null)
-                {
-                    return NotFound();
+                    ModelState.AddModelError(error.Key, error.Message);
                 }
 
-                day.Periods.Add(periodEntity);
+                if (!ModelState.IsValid)
+                {
+                    var periodViewModel = new PeriodViewModel(period, id);
+                    return View(periodViewModel);
+                }
             }
-            else
+            else if (serviceResult.Result == Result.NotFound)
             {
-                _context.Periods.Update(periodEntity);
+                return NotFound();
             }
 
-            _context.SaveChanges();
-            id = periodEntity.Id;
-
-            var idPair = _context.SchoolDays
-                .Include(d => d.Subject)
-                .Where(d => d.Id == dayId)
-                .Select(d => new { dayId = d.Id, subjectId = d.Subject.Id })
-                .First();
-
-            int schoolDayId = idPair.dayId;
-            int subjectId = idPair.subjectId;
-
-            Approver.Create(_context).CascadeUpdateApprovedDay(schoolDayId);
-
-            _context.SaveChanges();
-
-
+            int subjectId = serviceResult.Id;
             return RedirectToSubject(subjectId);
         }
 
         public IActionResult ApprovePeriod(int id)
         {
-            PeriodEntity period = _context.Periods
-                .Include(p => p.SchoolDay)
-                .ThenInclude(d => d.Subject)
-                .FirstOrDefault(p => p.Id == id);
-            if (period == null)
+            ServiceResult result = PeriodService.ApprovePeriod(id);
+
+            if (result.Result == Result.NotFound)
             {
                 return NotFound();
             }
 
-            int subjectId = period.SchoolDay.Subject.Id;
-            int dayId = period.SchoolDay.Id;
-
-            period.IsApproved = true;
-            Approver.Create(_context).CascadeUpdateApprovedDay(dayId);
-
-            _context.SaveChanges();
-
+            int subjectId = result.Id;
             return RedirectToSubject(subjectId);
         }
 
         public IActionResult DeletePeriod(int id)
         {
-            PeriodEntity period = _context.Periods
-                .Include(p => p.SchoolDay)
-                .ThenInclude(d => d.Subject)
-                .FirstOrDefault(p => p.Id == id);
-            if (period == null)
+            ServiceResult result = PeriodService.DeletePeriod(id);
+
+            if (result.Result == Result.NotFound)
             {
                 return NotFound();
             }
 
-            int subjectId = period.SchoolDay.Subject.Id;
-            int dayId = period.SchoolDay.Id;
-
-            _context.Periods.Remove(period);
-            Approver.Create(_context).CascadeUpdateApprovedDay(dayId);
-
-            _context.SaveChanges();
-
+            int subjectId = result.Id;
             return RedirectToSubject(subjectId);
         }
 

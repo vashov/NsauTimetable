@@ -1,0 +1,22 @@
+﻿@model NsauT.Web.Models.AccountController.UserBindingModel
+@{
+    ViewData["Title"] = "Вход";
+}
+
+<h4>Вход в систему</h4>
+
+<div class="row">
+    <form class="col-4" asp-action="login" method="post">
+        <div class="form-group">
+            <label for="Login">Логин</label>
+            <input asp-for="@Model.Login" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label for="Password">Пароль</label>
+            <input asp-for="@Model.Password" class="form-control" />
+        </div>
+
+        <input type="submit" class="btn btn-primary" value="Войти" />
+    </form>
+</div>
