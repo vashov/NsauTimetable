@@ -1,69 +1,45 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using NsauT.Web.Areas.Manage.Models.TimetableController;
-using NsauT.Web.DAL.DataStore;
+using NsauT.Web.BLL.Services.Timetable;
+using NsauT.Web.BLL.Services.Timetable.DTO;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace NsauT.Web.Areas.Manage.Controllers
 {
-    [Area("manage")]
-    public class TimetableController : Controller
+    public class TimetableController : ManageController
     {
-        private readonly TimetableContext _context;
+        private ITimetableService TimetableService { get; }
+        private IMapper Mapper { get; }
 
-        public TimetableController(TimetableContext context)
+        public TimetableController(ITimetableService timetableService, IMapper mapper)
         {
-            _context = context;
+            TimetableService = timetableService;
+            Mapper = mapper;
         }
 
         [HttpGet]
         public IActionResult Timetables()
         {
-            List<TimetableInfoModel> timetables = _context.Timetables
-                .AsNoTracking()
-                .Include(t => t.Subjects)
-                .Select(t => new TimetableInfoModel
-                {
-                    Id = t.Id,
-                    Key = t.Key,
-                    IsApproved = t.IsApproved,
-                    SubjectsAmount = t.Subjects.Count,
-                    SubjectsApproved = t.Subjects.Count(s => s.IsApproved)
-                })
-                .ToList();
-            return View(timetables);
+            IEnumerable<TimetableInfoDto> timetablesInfo = TimetableService.GetTimetablesInfo();
+            var timetablesInfoModels = Mapper.Map<IEnumerable<TimetableInfoModel>>(timetablesInfo);
+
+            return View(timetablesInfoModels);
         }
 
         [HttpGet]
         public IActionResult Timetable(int id)
         {
-            TimetableModel timetable = _context.Timetables
-                .AsNoTracking()
-                .Include(t => t.Groups)
-                .Include(t => t.Subjects)
-                .Where(t => t.Id == id)
-                .Select(t => new TimetableModel
-                {
-                    Key = t.Key,
-                    Groups = t.Groups.Select(g => g.Number),
-                    Subjects = t.Subjects.Select(s => new SubjectModel
-                    {
-                        Id = s.Id,
-                        Title = s.Title,
-                        Teachers = s.Teachers,
-                        IsApproved = s.IsApproved
-                    }),
-                    IsApproved = t.IsApproved
-                })
-                .FirstOrDefault();
+            TimetableModelDto timetableDto = TimetableService.GetTimetable(id);
 
-            if (timetable == null)
+            if (timetableDto == null)
             {
                 return NotFound();
             }
 
-            return View(timetable);
+            var timetableViewModel = Mapper.Map<TimetableViewModel>(timetableDto);
+
+            return View(timetableViewModel);
         }
     }
 }

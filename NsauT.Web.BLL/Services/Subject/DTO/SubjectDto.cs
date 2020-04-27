@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NsauT.Web.Areas.Manage.Models.SubjectController
+namespace NsauT.Web.BLL.Services.Subject.DTO
 {
-    public class SubjectModel
+    public class SubjectDto
     {
         public int Id { get; set; }
         public string Title { get; set; }
@@ -12,7 +12,7 @@ namespace NsauT.Web.Areas.Manage.Models.SubjectController
         public DateTime? LectureEndDate { get; set; }
         public DateTime? PracticeStartDate { get; set; }
         public DateTime? PracticeEndDate { get; set; }
-        public IEnumerable<SchoolDayModel> Days { get; set; }
+        public IEnumerable<SchoolDayDto> Days { get; set; }
         public bool IsApproved { get; set; }
     }
 }

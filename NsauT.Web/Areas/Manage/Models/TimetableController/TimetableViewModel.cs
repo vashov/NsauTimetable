@@ -2,7 +2,7 @@
 
 namespace NsauT.Web.Areas.Manage.Models.TimetableController
 {
-    public class TimetableModel
+    public class TimetableViewModel
     {
         public string Key { get; set; }
         public IEnumerable<string> Groups { get; set; }
