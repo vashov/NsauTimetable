@@ -16,7 +16,7 @@ namespace NsauT.Web.Checker
             return EqualityComparer<string>.Default.Equals(timetable.Hash, newHash);
         }
 
-        public void UpdateTimetable(TimetableContext context, 
+        public void UpdateTimetable(ApplicationContext context, 
             TimetableEntity timetableEntity, TimetableModel timetableModel, string hash)
         {
             context.Subjects.RemoveRange(timetableEntity.Subjects);
@@ -33,7 +33,7 @@ namespace NsauT.Web.Checker
             context.SaveChanges();
         }
 
-        public void AddTimetable(TimetableContext context, TimetableModel timetableModel, string hash)
+        public void AddTimetable(ApplicationContext context, TimetableModel timetableModel, string hash)
         {
             TimetableEntity timetableEntity = EntityMapper.MapTimetable(timetableModel, hash);
 

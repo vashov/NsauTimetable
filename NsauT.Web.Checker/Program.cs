@@ -51,7 +51,7 @@ namespace NsauT.Web.Checker
             List<TimetableModel> timetables = parserArgs.Timetables;
 
             DbContextOptions options = new DbContextOptionsBuilder().UseNpgsql(ConnectionString).Options;
-            using (var context = new TimetableContext(options))
+            using (var context = new ApplicationContext(options))
             {
                 foreach (TimetableModel timetable in timetables)
                 {

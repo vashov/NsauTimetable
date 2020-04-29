@@ -9,9 +9,9 @@ namespace NsauT.Web.BLL.Services.Timetable
 {
     public class TimetableService : ITimetableService
     {
-        private TimetableContext Context { get; }
+        private ApplicationContext Context { get; }
 
-        public TimetableService(TimetableContext context)
+        public TimetableService(ApplicationContext context)
         {
             Context = context;
         }

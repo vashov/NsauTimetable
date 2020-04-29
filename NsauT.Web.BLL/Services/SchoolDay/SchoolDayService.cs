@@ -8,10 +8,10 @@ namespace NsauT.Web.BLL.Services.SchoolDay
 {
     public class SchoolDayService : ISchoolDayService
     {
-        private TimetableContext Context { get; }
+        private ApplicationContext Context { get; }
         private IApproverFacade Approver { get; }
 
-        public SchoolDayService(TimetableContext context, IApproverFacade approver)
+        public SchoolDayService(ApplicationContext context, IApproverFacade approver)
         {
             Context = context;
             Approver = approver;

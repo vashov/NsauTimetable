@@ -1,15 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using NsauT.Web.Tools;
+using System.Threading.Tasks;
 
 namespace NsauT.Web
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public async static Task Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            IHost host = CreateHostBuilder(args).Build();
+
+            await DbPopulator.PopulateDbWithRolesAsync(host);
+
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

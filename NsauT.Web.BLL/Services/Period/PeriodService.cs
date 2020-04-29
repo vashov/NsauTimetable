@@ -9,10 +9,10 @@ namespace NsauT.Web.BLL.Services.Period
 {
     public class PeriodService : IPeriodService
     {
-        private TimetableContext Context { get; }
+        private ApplicationContext Context { get; }
         private IApproverFacade Approver { get; }
 
-        public PeriodService(TimetableContext context, IApproverFacade approver)
+        public PeriodService(ApplicationContext context, IApproverFacade approver)
         {
             Context = context;
             Approver = approver;
