@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using NsauT.Web.DAL.Models;
 
 namespace NsauT.Web.DAL.DataStore
 {
-    public class TimetableContext : DbContext
+    public class ApplicationContext : IdentityDbContext<UserEntity>
     {
         public DbSet<TimetableEntity> Timetables { get; set; }
         public DbSet<SubjectEntity> Subjects { get; set; }
@@ -11,14 +12,15 @@ namespace NsauT.Web.DAL.DataStore
         public DbSet<PeriodEntity> Periods { get; set; }
         public DbSet<GroupEntity> Groups { get; set; }
 
-
-        public TimetableContext(DbContextOptions options) : base(options)
+        public ApplicationContext(DbContextOptions options) : base(options)
         {
-            Database.EnsureCreated();
+            //Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<TimetableEntity>().HasAlternateKey(t => t.Key);
 
             modelBuilder.Entity<TimetableEntity>()

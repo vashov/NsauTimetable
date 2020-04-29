@@ -11,9 +11,9 @@ namespace NsauT.Web.BLL.Services.Subject
 {
     public class SubjectService : ISubjectService
     {
-        private TimetableContext Context { get; }
+        private ApplicationContext Context { get; }
 
-        public SubjectService(TimetableContext context)
+        public SubjectService(ApplicationContext context)
         {
             Context = context;
         }
