@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NsauT.Web.BLL.Infrastructure;
 using NsauT.Web.BLL.Services.Period;
 using NsauT.Web.BLL.Services.SchoolDay;
 using NsauT.Web.BLL.Services.Subject;
@@ -37,7 +36,6 @@ namespace NsauT.Web
             services.AddTransient<ISubjectService, SubjectService>();
             services.AddTransient<ISchoolDayService, SchoolDayService>();
             services.AddTransient<IPeriodService, PeriodService>();
-            services.AddTransient<IApproverFacade, ApproverFacade>();
             services.AddTransient<IUserService, UserService>();
 
             string connectionString = Configuration.GetConnectionString("TimetableDatabase");
