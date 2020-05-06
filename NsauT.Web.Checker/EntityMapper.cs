@@ -2,7 +2,7 @@
 using NsauT.Web.DAL.Models;
 using System.Collections.Generic;
 
-namespace NsauT.Web.DAL
+namespace NsauT.Web.Checker
 {
     public class EntityMapper
     {
