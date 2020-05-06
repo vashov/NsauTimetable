@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NsauT.Web.BLL.Services;
 using NsauT.Web.BLL.Services.User;
@@ -28,9 +29,14 @@ namespace NsauT.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Login(string returnUrl = null)
         {
-            return View();
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToTimetables();
+            }
+
+            return View(new SignInUserViewModel { ReturnUrl = returnUrl});
         }
 
         [HttpPost]
@@ -55,7 +61,29 @@ namespace NsauT.Web.Controllers
                 return Redirect(user.ReturnUrl);
             }
 
+            return RedirectToTimetables();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToHome();
+            }
+            
+            await UserService.SignOutAsync();
+            return RedirectToHome();
+        }
+
+        private IActionResult RedirectToTimetables()
+        {
             return RedirectToAction(actionName: "timetables", controllerName: "timetable", new { area = "manage" });
+        }
+
+        private IActionResult RedirectToHome()
+        {
+            return RedirectToAction(actionName: "index", controllerName: "home", new { area = "" });
         }
     }
 }

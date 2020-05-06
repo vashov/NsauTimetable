@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NsauT.Web.BLL.Infrastructure;
 using NsauT.Web.BLL.Services.Period;
 using NsauT.Web.BLL.Services.SchoolDay;
 using NsauT.Web.BLL.Services.Subject;
@@ -15,6 +14,7 @@ using NsauT.Web.BLL.Services.Timetable;
 using NsauT.Web.BLL.Services.User;
 using NsauT.Web.DAL.DataStore;
 using NsauT.Web.DAL.Models;
+using NsauT.Web.Tools.Mapping;
 
 namespace NsauT.Web
 {
@@ -36,13 +36,12 @@ namespace NsauT.Web
             services.AddTransient<ISubjectService, SubjectService>();
             services.AddTransient<ISchoolDayService, SchoolDayService>();
             services.AddTransient<IPeriodService, PeriodService>();
-            services.AddTransient<IApproverFacade, ApproverFacade>();
             services.AddTransient<IUserService, UserService>();
 
             string connectionString = Configuration.GetConnectionString("TimetableDatabase");
             services.AddDbContext<ApplicationContext>(option => option.UseNpgsql(connectionString));
 
-            services.AddAutoMapper(typeof(Startup));
+            services.AddAutoMapper(typeof(MappingProfile));
 
             services.AddIdentity<UserEntity, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationContext>();
