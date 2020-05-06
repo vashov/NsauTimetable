@@ -15,6 +15,7 @@ using NsauT.Web.BLL.Services.Timetable;
 using NsauT.Web.BLL.Services.User;
 using NsauT.Web.DAL.DataStore;
 using NsauT.Web.DAL.Models;
+using NsauT.Web.Tools.Mapping;
 
 namespace NsauT.Web
 {
@@ -42,7 +43,7 @@ namespace NsauT.Web
             string connectionString = Configuration.GetConnectionString("TimetableDatabase");
             services.AddDbContext<ApplicationContext>(option => option.UseNpgsql(connectionString));
 
-            services.AddAutoMapper(typeof(Startup));
+            services.AddAutoMapper(typeof(MappingProfile));
 
             services.AddIdentity<UserEntity, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationContext>();

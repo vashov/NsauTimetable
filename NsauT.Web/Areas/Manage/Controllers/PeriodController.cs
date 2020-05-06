@@ -34,10 +34,18 @@ namespace NsauT.Web.Areas.Manage.Controllers
                 {
                     return NotFound();
                 }
+                if (periodDto.SchoolDayId != dayId)
+                {
+                    return BadRequest();
+                }
             }
             else
             {
-                periodDto = new PeriodDto();
+                periodDto = new PeriodDto
+                {
+                    SchoolDayId = dayId,
+                    Number = Shared.Enums.PeriodNumber.First
+                };
             }
 
             var periodBindingModel = Mapper.Map<PeriodBindingModel>(periodDto);
@@ -55,10 +63,6 @@ namespace NsauT.Web.Areas.Manage.Controllers
             }
 
             var periodDto = Mapper.Map<PeriodDto>(period);
-            //PeriodNumber periodNumber = PeriodNumbersHelper.ConvertStringToPeriodNumber(period.Number);
-            //PeriodOption periodOption = PeriodOptionsHelper.ConvertStringToPeriodOption(period.Option);
-
-            //PeriodValidator.Create(ModelState).ValidateAndUpdateModelState(period, periodOption);
 
             ServiceResult serviceResult = PeriodService.AddOrUpdatePeriod(periodDto, id);
 

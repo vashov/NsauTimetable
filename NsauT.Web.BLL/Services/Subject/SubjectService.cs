@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NsauT.Web.BLL.Services.Subject.DTO;
+using NsauT.Web.BLL.Services.Timetable;
 using NsauT.Web.DAL.DataStore;
 using NsauT.Web.DAL.Models;
 using System;
@@ -12,10 +13,12 @@ namespace NsauT.Web.BLL.Services.Subject
     public class SubjectService : ISubjectService
     {
         private ApplicationContext Context { get; }
+        private ITimetableService TimetableService { get; }
 
-        public SubjectService(ApplicationContext context)
+        public SubjectService(ApplicationContext context, ITimetableService timetableService)
         {
             Context = context;
+            TimetableService = timetableService;
         }
 
         public SubjectDto GetSubject(int subjectId)
@@ -75,6 +78,8 @@ namespace NsauT.Web.BLL.Services.Subject
             Context.SaveChanges();
 
             int timetableId = subject.Timetable.Id;
+
+            TimetableService.UpdateApprovedStatus(timetableId);
             return new ServiceResult(Result.OK, timetableId);
         }
     }

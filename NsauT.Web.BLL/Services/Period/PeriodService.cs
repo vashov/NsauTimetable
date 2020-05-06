@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NsauT.Web.BLL.Infrastructure;
 using NsauT.Web.BLL.Services.Period.DTO;
+using NsauT.Web.BLL.Services.SchoolDay;
 using NsauT.Web.DAL.DataStore;
 using NsauT.Web.DAL.Models;
 using System.Linq;
@@ -10,18 +11,21 @@ namespace NsauT.Web.BLL.Services.Period
     public class PeriodService : IPeriodService
     {
         private ApplicationContext Context { get; }
-        private IApproverFacade Approver { get; }
+        //private IApproverFacade Approver { get; }
+        private ISchoolDayService SchoolDayService { get; }
 
-        public PeriodService(ApplicationContext context, IApproverFacade approver)
+        public PeriodService(ApplicationContext context, ISchoolDayService schoolDayService/*, IApproverFacade approver*/)
         {
             Context = context;
-            Approver = approver;
+            SchoolDayService = schoolDayService;
+            //Approver = approver;
         }
 
         public PeriodDto GetPeriod(int id)
         {
            PeriodDto period = Context.Periods
                 .AsNoTracking()
+                .Include(p => p.SchoolDay)
                 .Select(p => new PeriodDto
                 {
                     Id = p.Id,
@@ -32,6 +36,7 @@ namespace NsauT.Web.BLL.Services.Period
                     Option = p.Option,
                     OptionDate = p.OptionDate,
                     OptionCabinet = p.OptionCabinet,
+                    SchoolDayId = p.SchoolDay.Id,
                     IsApproved = p.IsApproved
                 })
                 .SingleOrDefault(t => t.Id == id);
@@ -70,7 +75,8 @@ namespace NsauT.Web.BLL.Services.Period
                 .Select(d => d.Subject.Id)
                 .Single();
 
-            Approver.CascadeUpdateApprovedDay(periodDto.SchoolDayId);
+            //Approver.CascadeUpdateApprovedDay(periodDto.SchoolDayId);
+            SchoolDayService.UpdateApprovedStatus(periodDto.SchoolDayId);
 
             return new ServiceResult(Result.OK, subjectId);
         }
@@ -146,7 +152,8 @@ namespace NsauT.Web.BLL.Services.Period
             period.IsApproved = true;
             Context.SaveChanges();
 
-            Approver.CascadeUpdateApprovedDay(dayId);
+            //Approver.CascadeUpdateApprovedDay(dayId);
+            SchoolDayService.UpdateApprovedStatus(dayId);
 
             return new ServiceResult(Result.OK, subjectId);
         }
@@ -168,7 +175,8 @@ namespace NsauT.Web.BLL.Services.Period
             Context.Periods.Remove(period);
             Context.SaveChanges();
 
-            Approver.CascadeUpdateApprovedDay(dayId);
+            //Approver.CascadeUpdateApprovedDay(dayId);
+            SchoolDayService.UpdateApprovedStatus(dayId);
 
             return new ServiceResult(Result.OK, subjectId);
         }

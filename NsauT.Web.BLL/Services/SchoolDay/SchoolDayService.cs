@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NsauT.Web.BLL.Infrastructure;
+using NsauT.Web.BLL.Services.Subject;
 using NsauT.Web.DAL.DataStore;
 using NsauT.Web.DAL.Models;
 using System.Linq;
@@ -9,12 +10,14 @@ namespace NsauT.Web.BLL.Services.SchoolDay
     public class SchoolDayService : ISchoolDayService
     {
         private ApplicationContext Context { get; }
-        private IApproverFacade Approver { get; }
+        //private IApproverFacade Approver { get; }
+        private ISubjectService SubjectService { get; }
 
-        public SchoolDayService(ApplicationContext context, IApproverFacade approver)
+        public SchoolDayService(ApplicationContext context, ISubjectService subjectService/*, IApproverFacade approver*/)
         {
             Context = context;
-            Approver = approver;
+            SubjectService = subjectService;
+            //Approver = approver;
         }
 
         public ServiceResult DeleteDay(int dayId)
@@ -33,7 +36,8 @@ namespace NsauT.Web.BLL.Services.SchoolDay
             Context.SchoolDays.Remove(day);
             Context.SaveChanges();
 
-            Approver.CascadeUpdateApprovedSubject(subjectId);
+            //Approver.CascadeUpdateApprovedSubject(subjectId);
+            SubjectService.UpdateApprovedStatus(subjectId);
 
             return new ServiceResult(Result.OK, subjectId);
         }

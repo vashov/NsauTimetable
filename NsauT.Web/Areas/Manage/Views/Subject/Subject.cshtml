@@ -27,7 +27,7 @@
             <span class="font-weight-bold">@day.Day</span> - @(day.IsDayOfEvenWeek ? "Четная" : "Нечетная")
         </div>
         <div class="col-md-1">
-            <a asp-action="deleteday" asp-route-id="@day.Id" class="btn btn-outline-danger btn-sm">Удалить день</a>
+            <a asp-controller="schoolday" asp-action="deleteday" asp-route-id="@day.Id" class="btn btn-outline-danger btn-sm">Удалить день</a>
         </div>
     </div>
 </div>
@@ -59,9 +59,9 @@
                     <td>@period.Option</td>
                     <td>@period.OptionDate</td>
                     <td>@period.OptionCabinet</td>
-                    <td><a asp-controller="period" asp-action="approveperiod" asp-route-id="@period.Id" class="btn btn-outline-success btn-sm">Проверено</a></td>
-                    <td><a asp-controller="period" asp-action="period" asp-route-id="@period.Id" asp-route-dayId="@day.Id" class="btn btn-outline-primary btn-sm">Редактировать</a></td>
-                    <td><a asp-controller="period" asp-action="deleteperiod" asp-route-id="@period.Id" class="btn btn-outline-danger btn-sm">Удалить</a></td>
+                    <td><a asp-area="manage" asp-controller="period" asp-action="approveperiod" asp-route-id="@period.Id" class="btn btn-outline-success btn-sm">Проверено</a></td>
+                    <td><a asp-area="manage" asp-controller="period" asp-action="period" asp-route-id="@period.Id" asp-route-dayId="@day.Id" class="btn btn-outline-primary btn-sm">Редактировать</a></td>
+                    <td><a asp-area="manage" asp-controller="period" asp-action="deleteperiod" asp-route-id="@period.Id" class="btn btn-outline-danger btn-sm">Удалить</a></td>
                 </tr>
             }
         </tbody>
