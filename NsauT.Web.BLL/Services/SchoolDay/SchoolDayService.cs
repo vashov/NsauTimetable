@@ -55,6 +55,8 @@ namespace NsauT.Web.BLL.Services.SchoolDay
             Context.SaveChanges();
 
             int subjectId = day.Subject.Id;
+            SubjectService.UpdateApprovedStatus(subjectId);
+
             return new ServiceResult(Result.OK, subjectId);
         }
     }

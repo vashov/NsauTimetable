@@ -1,9 +1,5 @@
 ﻿using AutoMapper;
-using NsauT.Shared.Enums;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace NsauT.Web.Tools.Mapping
 {
@@ -35,10 +31,10 @@ namespace NsauT.Web.Tools.Mapping
             CreateMap<DayOfWeek, string>()
                 .ConvertUsing(typeof(DayOfWeekToStringConverter));
 
-            CreateMap<PeriodOption, string>()
+            CreateMap<NsauT.Shared.Enums.PeriodOption, string>()
                 .ConvertUsing(typeof(PeriodOptionToStringConverter));
 
-            CreateMap<PeriodNumber, string>()
+            CreateMap<NsauT.Shared.Enums.PeriodNumber, string>()
                 .ConvertUsing(typeof(PeriodNumberToStringConverter));
 
             CreateMap<NsauT.Web.BLL.Services.Period.DTO.PeriodDto,
@@ -47,11 +43,28 @@ namespace NsauT.Web.Tools.Mapping
             CreateMap<NsauT.Web.Areas.Manage.Models.PeriodController.PeriodBindingModel,
                 NsauT.Web.BLL.Services.Period.DTO.PeriodDto>();
 
-            CreateMap<string, PeriodNumber>()
+            CreateMap<string, NsauT.Shared.Enums.PeriodNumber>()
                 .ConvertUsing(typeof(StringToPeriodNumberConverter));
 
-            CreateMap<string, PeriodOption>()
+            CreateMap<string, NsauT.Shared.Enums.PeriodOption>()
                 .ConvertUsing(typeof(StringToPeriodOptionConverter));
+
+            #region api-dto mapping
+            CreateMap<NsauT.Web.BLL.Services.Timetable.DTO.ApprovedTimetableDto, 
+                NsauT.Shared.Models.ApprovedTimetableKey>();
+
+            CreateMap<NsauT.Web.BLL.Services.Timetable.DTO.TimetableApi.PeriodApiDto,
+                NsauT.Shared.Models.TimetableInfo.PeriodModel>();
+
+            CreateMap<NsauT.Web.BLL.Services.Timetable.DTO.TimetableApi.SchoolDayApiDto,
+                NsauT.Shared.Models.TimetableInfo.SchoolDayModel>();
+
+            CreateMap<NsauT.Web.BLL.Services.Timetable.DTO.TimetableApi.SubjectApiDto,
+                NsauT.Shared.Models.TimetableInfo.SubjectModel>();
+
+            CreateMap<NsauT.Web.BLL.Services.Timetable.DTO.TimetableApi.TimetableApiDto,
+                NsauT.Shared.Models.TimetableInfo.TimetableModel>();
+            #endregion
         }
     }
 }

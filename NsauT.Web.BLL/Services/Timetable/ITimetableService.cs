@@ -1,4 +1,5 @@
 ﻿using NsauT.Web.BLL.Services.Timetable.DTO;
+using NsauT.Web.BLL.Services.Timetable.DTO.TimetableApi;
 using System.Collections.Generic;
 
 namespace NsauT.Web.BLL.Services.Timetable
@@ -8,6 +9,7 @@ namespace NsauT.Web.BLL.Services.Timetable
         IEnumerable<TimetableInfoDto> GetTimetablesInfo();
         TimetableModelDto GetTimetable(int timetableId);
         IEnumerable<ApprovedTimetableDto> GetApprovedTimetables();
+        TimetableApiDto GetApprovedTimetable(int timetableId);
         ServiceResult UpdateApprovedStatus(int timetableId);
     }
 }
