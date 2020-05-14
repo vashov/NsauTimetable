@@ -4,17 +4,21 @@ using NsauT.Web.Areas.Manage.Models.PeriodController;
 using NsauT.Web.BLL.Services;
 using NsauT.Web.BLL.Services.Period;
 using NsauT.Web.BLL.Services.Period.DTO;
+using NsauT.Web.BLL.Services.SchoolDay;
 
 namespace NsauT.Web.Areas.Manage.Controllers
 {
     public class PeriodController : ManageController
     {
         private IPeriodService PeriodService { get; }
+        private ISchoolDayService SchoolDayService { get; }
+
         private IMapper Mapper { get; }
 
-        public PeriodController(IPeriodService periodService, IMapper mapper)
+        public PeriodController(IPeriodService periodService, ISchoolDayService schoolDayService, IMapper mapper)
         {
             PeriodService = periodService;
+            SchoolDayService = schoolDayService;
             Mapper = mapper;
         }
 
@@ -88,8 +92,10 @@ namespace NsauT.Web.Areas.Manage.Controllers
             return RedirectToSubject(subjectId);
         }
 
-        public IActionResult ApprovePeriod(int id)
+        [HttpPut]
+        public IActionResult Approve(int id, [FromQuery] int dayId)
         {
+            // TODO: maybe return some boolean result
             ServiceResult result = PeriodService.ApprovePeriod(id);
 
             if (result.Result == Result.NotFound)
@@ -97,11 +103,21 @@ namespace NsauT.Web.Areas.Manage.Controllers
                 return NotFound();
             }
 
-            int subjectId = result.Id;
-            return RedirectToSubject(subjectId);
+            if (result.Result != Result.OK)
+            {
+                return BadRequest();
+            }
+
+            bool dayApproved = SchoolDayService.IsDayApproved(dayId);
+            return Ok(new
+            {
+                periodApproved = true,
+                dayApproved,
+            });
         }
 
-        public IActionResult DeletePeriod(int id)
+        [HttpDelete]
+        public IActionResult Delete(int id, [FromQuery] int dayId)
         {
             ServiceResult result = PeriodService.DeletePeriod(id);
 
@@ -110,8 +126,11 @@ namespace NsauT.Web.Areas.Manage.Controllers
                 return NotFound();
             }
 
-            int subjectId = result.Id;
-            return RedirectToSubject(subjectId);
+            bool dayApproved = SchoolDayService.IsDayApproved(dayId);
+            return Ok(new
+            {
+                dayApproved
+            });
         }
 
         private RedirectToActionResult RedirectToSubject(int subjectId)

@@ -21,7 +21,7 @@
 @foreach (SchoolDayModel day in Model.Days)
 {
 <div>
-    <div class="row mb-1">
+    <div class="row mb-1" id='@("day" + day.Id)'>
         <div class="col-md-2">
             <span class="mr-1"><img src="~/images/@(day.IsApproved ? "check-3x.png" : "x-3x.png")" alt="@(day.IsApproved ? "Да" : "Нет")" /></span>
             <span class="font-weight-bold">@day.Day</span> - @(day.IsDayOfEvenWeek ? "Четная" : "Нечетная")
@@ -34,34 +34,34 @@
     <table class="table table-bordered table-hover">
         <thead class="thead-dark">
             <tr>
-                <th>Проверена</th>
+                <th class="fit">Проверена</th>
                 <th>Номер пары</th>
-                <th>Лекция</th>
-                <th>Подгруппа</th>
+                <th class="fit">Лекция</th>
+                <th class="fit">Подгруппа</th>
                 <th>Кабинет</th>
                 <th>*Особое</th>
                 <th>*Дата</th>
                 <th>*Кабинет</th>
-                <th></th>
-                <th></th>
-                <th></th>
+                <th class="fit"></th>
+                <th class="fit"></th>
+                <th class="fit"></th>
             </tr>
         </thead>
         <tbody>
             @foreach (PeriodModel period in day.Periods.OrderBy(p => p.Number))
             {
-                <tr>
-                    <td><img src="~/images/@(period.IsApproved ? "check-3x.png" : "x-3x.png")" alt="@(period.IsApproved ? "Да" : "Нет")" /></td>
+                <tr id="@("period" + period.Id)">
+                    <td class="fit"><img src="~/images/@(period.IsApproved ? "check-3x.png" : "x-3x.png")" alt="@(period.IsApproved ? "Да" : "Нет")" /></td>
                     <td>@period.Number</td>
-                    <td>@(period.IsLecture ? "Да" : "Нет")</td>
-                    <td>@period.Subgroup</td>
+                    <td class="fit">@(period.IsLecture ? "Да" : "Нет")</td>
+                    <td class="fit">@period.Subgroup</td>
                     <td>@period.Cabinet</td>
                     <td>@period.Option</td>
                     <td>@period.OptionDate</td>
                     <td>@period.OptionCabinet</td>
-                    <td><a asp-area="manage" asp-controller="period" asp-action="approveperiod" asp-route-id="@period.Id" class="btn btn-outline-success btn-sm">Проверено</a></td>
-                    <td><a asp-area="manage" asp-controller="period" asp-action="period" asp-route-id="@period.Id" asp-route-dayId="@day.Id" class="btn btn-outline-primary btn-sm">Редактировать</a></td>
-                    <td><a asp-area="manage" asp-controller="period" asp-action="deleteperiod" asp-route-id="@period.Id" class="btn btn-outline-danger btn-sm">Удалить</a></td>
+                    <td class="fit"><button type="button" onclick="approvePeriod(@period.Id, @day.Id)" @(period.IsApproved ? "disabled" : "") class="btn @(period.IsApproved ? "btn-outline-secondary" : "btn-outline-success") btn-sm">Проверено</button></td>
+                    <td class="fit"><a asp-area="manage" asp-controller="period" asp-action="period" asp-route-id="@period.Id" asp-route-dayId="@day.Id" class="btn btn-outline-primary btn-sm">Редактировать</a></td>
+                    <td class="fit"><button type="button" onclick="deletePeriod(@period.Id, @day.Id)" class="btn btn-outline-danger btn-sm">Удалить</button></td>
                 </tr>
             }
         </tbody>
@@ -70,4 +70,81 @@
     <br />
     <br />
     <br />
+}
+
+@section scripts {
+    <script type="text/javascript">
+        function approvePeriod(periodId, dayId) {
+            console.log('try approve period ' + periodId + ', day ' + dayId);
+
+            var btn = $('#period' + periodId + ' button:contains(Проверено)');
+            btn.prop('disabled', true);
+            btn.html('<span class="spinner-border spinner-border-sm"></span> Загрузка...');
+
+            $.ajax({
+                type: 'PUT',
+                url: '@Url.Action("approve", "period")' + '/' + periodId + '?dayId=' + dayId,
+                dataType: 'json',
+                error: function () {
+                    btn.html('Проверено');
+                    btn.prop('disabled', false);
+                    alert('error');
+                },
+                success: function (result) {
+                    console.log('success: ' + result);
+                    console.log('success: ' + result.periodApproved + ' ' + result.dayApproved);
+
+                    if (!result.periodApproved) {
+                        return;
+                    }
+
+                    var periodImg = $('#period' + periodId + ' img');
+                    periodImg.attr('src', '@Url.Content("/images/check-3x.png")');
+                    periodImg.attr('alt', 'Да');
+
+                    btn.prop('disabled', true);
+                    btn.html('Проверено');
+                    btn.addClass('btn-outline-secondary');
+                    btn.removeClass('btn-outline-success');
+
+                    if (!result.dayApproved) {
+                        return;
+                    }
+
+                    var dayImg = $('#day' + dayId + ' img');
+                    dayImg.attr('src', '@Url.Content("/images/check-3x.png")');
+                    dayImg.attr('alt', 'Да');
+                }
+            });
+        }
+        function deletePeriod(periodId, dayId) {
+            console.log('try delete period ' + periodId);
+
+            var btn = $('#period' + periodId + ' button:contains(Удалить)');
+            btn.prop('disabled', true);
+            btn.html('<span class="spinner-border spinner-border-sm"></span> Загрузка...');
+
+            $.ajax({
+                type: 'DELETE',
+                url: '@Url.Action("delete", "period")' + '/' + periodId + '?dayId=' + dayId,
+                dataType: 'json',
+                error: function () {
+                    btn.html('Удалить');
+                    btn.prop('disabled', false);
+                    alert('error');
+                },
+                success: function (result) {
+                    $('#period' + periodId).remove();
+
+                    if (!result.dayApproved) {
+                        return;
+                    }
+
+                    var dayImg = $('#day' + dayId + ' img');
+                    dayImg.attr('src', '@Url.Content("/images/check-3x.png")');
+                    dayImg.attr('alt', 'Да');
+                }
+            })
+        }
+    </script>
 }

@@ -59,5 +59,16 @@ namespace NsauT.Web.BLL.Services.SchoolDay
 
             return new ServiceResult(Result.OK, subjectId);
         }
+
+        public bool IsDayApproved(int dayId)
+        {
+            bool dayApproved = Context.SchoolDays
+                .AsNoTracking()
+                .Where(d => d.Id == dayId)
+                .Select(d => d.IsApproved)
+                .SingleOrDefault();
+
+            return dayApproved;
+        }
     }
 }

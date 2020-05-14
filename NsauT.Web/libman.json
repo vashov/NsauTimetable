@@ -22,12 +22,15 @@
                 "dist/jquery.validate.js",
                 "dist/jquery.validate.min.js"
             ]
-        }
-    ,
-{
-  "provider": "cdnjs",
-  "library": "jquery@3.5.0",
-  "destination": "wwwroot/lib/jquery/"
-}
-]
+        },
+        {
+            "provider": "cdnjs",
+            "library": "jquery@3.5.0",
+            "destination": "wwwroot/lib/jquery/",
+            "files": [
+                "jquery.min.js",
+                "jquery.js"
+            ]
+        }        
+    ]
 }
