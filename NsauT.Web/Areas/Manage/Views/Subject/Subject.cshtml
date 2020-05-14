@@ -18,7 +18,7 @@
 </div>
 <br /><br />
 
-@foreach (SchoolDayModel day in Model.Days.OrderBy(d => d.Day).ThenBy(d => d.IsDayOfEvenWeek))
+@foreach (SchoolDayModel day in Model.Days)
 {
 <div>
     <div class="row mb-1">

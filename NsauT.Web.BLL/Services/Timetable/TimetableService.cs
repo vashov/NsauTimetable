@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NsauT.Web.BLL.Services.Timetable.DTO;
+using NsauT.Web.BLL.Services.Timetable.DTO.TimetableApi;
 using NsauT.Web.DAL.DataStore;
 using NsauT.Web.DAL.Models;
 using System.Collections.Generic;
@@ -89,6 +90,53 @@ namespace NsauT.Web.BLL.Services.Timetable
             Context.SaveChanges();
 
             return new ServiceResult(Result.OK, timetable.Id);
+        }
+
+        public TimetableApiDto GetApprovedTimetable(int timetableId)
+        {
+            TimetableApiDto timetable = Context.Timetables
+                .Where(t => t.IsApproved)
+                .Include(t => t.Groups)
+                .Include(t => t.Subjects)
+                    .ThenInclude(s => s.Days)
+                    .ThenInclude(d => d.Periods)
+                .Select(t => new TimetableApiDto
+                {
+                    Id = t.Id,
+                    Key = t.Key,
+                    Hash = t.Hash,
+                    Groups = t.Groups.Select(g => g.Number).ToList(),
+                    Subjects = t.Subjects.Select(s => new SubjectApiDto
+                    {
+                        Id = s.Id, 
+                        Title = s.Title,
+                        Teachers = s.Teachers,
+                        LectureStartDate = s.LectureStartDate,
+                        LectureEndDate = s.LectureEndDate,
+                        PracticeStartDate = s.PracticeStartDate,
+                        PracticeEndDate  = s.PracticeEndDate,
+                        Days = s.Days.Select(d => new SchoolDayApiDto
+                        {
+                            Id = d.Id,
+                            Day = d.Day,
+                            IsDayOfEvenWeek = d.IsDayOfEvenWeek,
+                            Periods = d.Periods.Select(p => new PeriodApiDto
+                            {
+                                Id = p.Id,
+                                Number = p.Number,
+                                Cabinet = p.Cabinet,
+                                Subgroup = p.Subgroup,
+                                IsLecture = p.IsLecture,
+                                Option = p.Option,
+                                OptionDate = p.OptionDate,
+                                OptionCabinet = p.OptionCabinet
+                            }).ToList()
+                        }).ToList()
+                    }).ToList()
+                })
+                .SingleOrDefault(t => t.Id == timetableId);
+
+            return timetable;
         }
     }
 }
