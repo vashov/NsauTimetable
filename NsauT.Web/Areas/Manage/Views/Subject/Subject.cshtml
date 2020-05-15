@@ -20,17 +20,16 @@
 
 @foreach (SchoolDayModel day in Model.Days)
 {
-<div>
-    <div class="row mb-1" id='@("day" + day.Id)'>
-        <div class="col-md-2">
-            <span class="mr-1"><img src="~/images/@(day.IsApproved ? "check-3x.png" : "x-3x.png")" alt="@(day.IsApproved ? "Да" : "Нет")" /></span>
-            <span class="font-weight-bold">@day.Day</span> - @(day.IsDayOfEvenWeek ? "Четная" : "Нечетная")
+<div class="mb-5 pb-3" id='@("day" + day.Id)'>
+    <div class="row mb-2">
+        <div class="col-2">
+            <span class="mr-1"><img src="~/images/@(day.IsApproved ? "check-3x.png" : "x-3x.png")" alt="@(day.IsApproved ? "Да" : "Нет")" data-check-img-url='@Url.Content("/images/check-3x.png")'/></span>
+            <span class="font-weight-bold dayName">@day.Day - @(day.IsDayOfEvenWeek ? "Четная" : "Нечетная")</span>
         </div>
-        <div class="col-md-1">
-            <a asp-controller="schoolday" asp-action="deleteday" asp-route-id="@day.Id" class="btn btn-outline-danger btn-sm">Удалить день</a>
+        <div class="col-2">
+            <button type="button" onclick="deleteDay(@day.Id)" class="btn btn-outline-danger btn-sm delete-day-btn" data-request-url='@Url.Action("delete", "schoolday")'>Удалить день</button>
         </div>
     </div>
-</div>
     <table class="table table-bordered table-hover">
         <thead class="thead-dark">
             <tr>
@@ -51,100 +50,25 @@
             @foreach (PeriodModel period in day.Periods.OrderBy(p => p.Number))
             {
                 <tr id="@("period" + period.Id)">
-                    <td class="fit"><img src="~/images/@(period.IsApproved ? "check-3x.png" : "x-3x.png")" alt="@(period.IsApproved ? "Да" : "Нет")" /></td>
-                    <td>@period.Number</td>
+                    <td class="fit"><img src="~/images/@(period.IsApproved ? "check-3x.png" : "x-3x.png")" alt="@(period.IsApproved ? "Да" : "Нет")" data-check-img-url='@Url.Content("/images/check-3x.png")'/></td>
+                    <td class="period-number">@period.Number</td>
                     <td class="fit">@(period.IsLecture ? "Да" : "Нет")</td>
                     <td class="fit">@period.Subgroup</td>
                     <td>@period.Cabinet</td>
                     <td>@period.Option</td>
                     <td>@period.OptionDate</td>
                     <td>@period.OptionCabinet</td>
-                    <td class="fit"><button type="button" onclick="approvePeriod(@period.Id, @day.Id)" @(period.IsApproved ? "disabled" : "") class="btn @(period.IsApproved ? "btn-outline-secondary" : "btn-outline-success") btn-sm">Проверено</button></td>
-                    <td class="fit"><a asp-area="manage" asp-controller="period" asp-action="period" asp-route-id="@period.Id" asp-route-dayId="@day.Id" class="btn btn-outline-primary btn-sm">Редактировать</a></td>
-                    <td class="fit"><button type="button" onclick="deletePeriod(@period.Id, @day.Id)" class="btn btn-outline-danger btn-sm">Удалить</button></td>
+                    <td class="fit"><button type="button" onclick="approvePeriod(@period.Id, @day.Id)" @(period.IsApproved ? "disabled" : "") class="btn @(period.IsApproved ? "btn-outline-secondary" : "btn-outline-success") btn-sm approve-btn" data-request-url='@Url.Action("approve", "period")'>Проверено</button></td>
+                    <td class="fit"><button onclick="editPeriod(@period.Id, @day.Id)" class="btn btn-outline-primary btn-sm edit-btn" data-request-url='@Url.Action("period", "period")'>Редактировать</button></td>
+                    <td class="fit"><button type="button" onclick="deletePeriod(@period.Id, @day.Id)" class="btn btn-outline-danger btn-sm delete-btn" data-request-url='@Url.Action("delete", "period")'>Удалить</button></td>
                 </tr>
             }
         </tbody>
     </table>
-    <a class="btn btn-outline-primary btn-sm" asp-controller="period" asp-action="period" asp-route-dayId="@day.Id">Добавить пару</a>
-    <br />
-    <br />
-    <br />
+    <button class="btn btn-outline-primary btn-sm new-period-btn" onclick="addNewPeriod(@day.Id)" data-request-url='@Url.Action("period", "period")'>Добавить пару</button>
+</div>
 }
 
 @section scripts {
-    <script type="text/javascript">
-        function approvePeriod(periodId, dayId) {
-            console.log('try approve period ' + periodId + ', day ' + dayId);
-
-            var btn = $('#period' + periodId + ' button:contains(Проверено)');
-            btn.prop('disabled', true);
-            btn.html('<span class="spinner-border spinner-border-sm"></span> Загрузка...');
-
-            $.ajax({
-                type: 'PUT',
-                url: '@Url.Action("approve", "period")' + '/' + periodId + '?dayId=' + dayId,
-                dataType: 'json',
-                error: function () {
-                    btn.html('Проверено');
-                    btn.prop('disabled', false);
-                    alert('error');
-                },
-                success: function (result) {
-                    console.log('success: ' + result);
-                    console.log('success: ' + result.periodApproved + ' ' + result.dayApproved);
-
-                    if (!result.periodApproved) {
-                        return;
-                    }
-
-                    var periodImg = $('#period' + periodId + ' img');
-                    periodImg.attr('src', '@Url.Content("/images/check-3x.png")');
-                    periodImg.attr('alt', 'Да');
-
-                    btn.prop('disabled', true);
-                    btn.html('Проверено');
-                    btn.addClass('btn-outline-secondary');
-                    btn.removeClass('btn-outline-success');
-
-                    if (!result.dayApproved) {
-                        return;
-                    }
-
-                    var dayImg = $('#day' + dayId + ' img');
-                    dayImg.attr('src', '@Url.Content("/images/check-3x.png")');
-                    dayImg.attr('alt', 'Да');
-                }
-            });
-        }
-        function deletePeriod(periodId, dayId) {
-            console.log('try delete period ' + periodId);
-
-            var btn = $('#period' + periodId + ' button:contains(Удалить)');
-            btn.prop('disabled', true);
-            btn.html('<span class="spinner-border spinner-border-sm"></span> Загрузка...');
-
-            $.ajax({
-                type: 'DELETE',
-                url: '@Url.Action("delete", "period")' + '/' + periodId + '?dayId=' + dayId,
-                dataType: 'json',
-                error: function () {
-                    btn.html('Удалить');
-                    btn.prop('disabled', false);
-                    alert('error');
-                },
-                success: function (result) {
-                    $('#period' + periodId).remove();
-
-                    if (!result.dayApproved) {
-                        return;
-                    }
-
-                    var dayImg = $('#day' + dayId + ' img');
-                    dayImg.attr('src', '@Url.Content("/images/check-3x.png")');
-                    dayImg.attr('alt', 'Да');
-                }
-            })
-        }
-    </script>
+    <script type="text/javascript" src="~/js/actionsOnSubjectPage.js"></script>
 }

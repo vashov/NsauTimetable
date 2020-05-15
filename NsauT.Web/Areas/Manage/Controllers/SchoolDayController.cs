@@ -16,12 +16,10 @@ namespace NsauT.Web.Areas.Manage.Controllers
             Mapper = mapper;
         }
 
-        [HttpGet]
-        public IActionResult DeleteDay(int? id, [FromQuery] int dayId)
+        [HttpDelete]
+        public IActionResult Delete(int id)
         {
-            if (true)
-                return NotFound();
-            /*ServiceResult serviceResult = SchoolDayService.DeleteDay(id);
+            ServiceResult serviceResult = SchoolDayService.DeleteDay(id);
             if (serviceResult.Result == Result.NotFound)
             {
                 return NotFound();
@@ -32,13 +30,7 @@ namespace NsauT.Web.Areas.Manage.Controllers
                 return BadRequest();
             }
 
-            int subjectId = serviceResult.Id;
-            return RedirectToSubject(subjectId);*/
-        }
-
-        private RedirectToActionResult RedirectToSubject(int subjectId)
-        {
-            return RedirectToAction(nameof(SubjectController.Subject), "subject", new { id = subjectId });
+            return Ok();
         }
     }
 }
