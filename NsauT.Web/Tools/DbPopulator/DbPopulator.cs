@@ -31,7 +31,8 @@ namespace NsauT.Web.Tools
                     if (needAdminInitialize)
                     {
                         var userManager = services.GetRequiredService<UserManager<UserEntity>>();
-                        await AdminInitializer.InitializeAsync(userManager);
+                        IConfigurationSection debugAdminConfig = configuration.GetSection("DebugAdmin");
+                        await AdminInitializer.InitializeAsync(userManager, debugAdminConfig);
                     }
                 }
                 catch (Exception)
