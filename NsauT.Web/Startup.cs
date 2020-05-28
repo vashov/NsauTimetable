@@ -15,6 +15,7 @@ using NsauT.Web.BLL.Services.User;
 using NsauT.Web.DAL.DataStore;
 using NsauT.Web.DAL.Models;
 using NsauT.Web.Tools.Mapping;
+using System;
 
 namespace NsauT.Web
 {
@@ -38,8 +39,9 @@ namespace NsauT.Web
             services.AddTransient<IPeriodService, PeriodService>();
             services.AddTransient<IUserService, UserService>();
 
-            string connectionString = Configuration.GetConnectionString("TimetableDatabase");
-            services.AddDbContext<ApplicationContext>(option => option.UseNpgsql(connectionString));
+            string connectionString = GetConnectionString();
+            services.AddDbContext<ApplicationContext>(option 
+                => option.UseNpgsql(connectionString, o => o.SetPostgresVersion(9, 6)));
 
             services.AddAutoMapper(typeof(MappingProfile));
 
@@ -81,6 +83,18 @@ namespace NsauT.Web
                     );
                 //endpoints.MapControllers();
             });
+        }
+
+        private string GetConnectionString()
+        {
+            string connString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+            if (!string.IsNullOrEmpty(connString))
+            {
+                return connString;
+            }
+
+            connString = Configuration.GetConnectionString("TimetableDatabase");
+            return connString;
         }
     }
 }
