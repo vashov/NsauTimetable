@@ -1,11 +1,17 @@
-﻿using System.Security.Cryptography;
+﻿using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace NsauT.Web.Checker
 {
-    internal class HashCoder
+    internal static class HashCoder
     {
-        public string GetSha256Hash(string input)
+        public static bool IsSameHashes(string hashOne, string hashTwo)
+        {
+            return EqualityComparer<string>.Default.Equals(hashOne, hashTwo);
+        }
+
+        public static string GetSha256Hash(string input)
         {
             using (SHA256 sha256Hash = SHA256.Create())
             {

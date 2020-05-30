@@ -1,4 +1,5 @@
 ﻿using NsauT.Shared.BusinessModels;
+using NsauT.Shared.Tools;
 using NsauT.Web.DAL.Models;
 using System.Collections.Generic;
 
@@ -6,20 +7,23 @@ namespace NsauT.Web.Checker
 {
     public class EntityMapper
     {
-        public TimetableEntity MapTimetable(TimetableModel timetableModel, string hash)
+        public TimetableEntity MapTimetable(TimetableModel timetableModel)
         {
+            string jsonTimetable = TimetableSerializer.SerializeToJson(timetableModel);
+            string hashTimetable = HashCoder.GetSha256Hash(jsonTimetable);
+
             var entity = new TimetableEntity
             {
                 Key = timetableModel.Key,
                 Groups = MapGroups(timetableModel.Groups),
                 Subjects = MapSubjects(timetableModel.Subjects),
-                Hash = hash
+                Hash = hashTimetable
             };
 
             return entity;
         }
 
-        public List<SubjectEntity> MapSubjects(List<SubjectModel> subjects)
+        private List<SubjectEntity> MapSubjects(List<SubjectModel> subjects)
         {
             var subjectEntities = new List<SubjectEntity>();
 
@@ -32,7 +36,7 @@ namespace NsauT.Web.Checker
             return subjectEntities;
         }
 
-        public List<GroupEntity> MapGroups(List<string> groups)
+        private List<GroupEntity> MapGroups(List<string> groups)
         {
             var groupEntities = new List<GroupEntity>();
 
@@ -48,15 +52,33 @@ namespace NsauT.Web.Checker
 
         private SubjectEntity MapOneSubject(SubjectModel subjectModel)
         {
-            SubjectEntity entity = new SubjectEntity
+            string subjectJson = TimetableSerializer.SerializeToJson(subjectModel);
+            string subjectHash = HashCoder.GetSha256Hash(subjectJson);
+
+            var info = new SubjectInfoEntity
             {
                 Title = subjectModel.Title,
                 Teachers = subjectModel.Teachers,
                 LectureStartDate = subjectModel.LectureStartDate,
                 LectureEndDate = subjectModel.LectureEndDate,
                 PracticeStartDate = subjectModel.PracticeStartDate,
-                PracticeEndDate = subjectModel.PracticeEndDate,
-                Days = MapSchoolDays(subjectModel.Days)
+                PracticeEndDate = subjectModel.PracticeEndDate
+            };
+
+            string infoJson = TimetableSerializer.SerializeToJson(info);
+            string infoHash = HashCoder.GetSha256Hash(infoJson);
+
+            info.Hash = infoHash;
+
+            string daysJson = TimetableSerializer.SerializeToJson(subjectModel.Days);
+            string daysHash = HashCoder.GetSha256Hash(daysJson);
+
+            SubjectEntity entity = new SubjectEntity
+            {
+                Info = info,
+                Days = MapSchoolDays(subjectModel.Days),
+                HashDays = daysHash,
+                Hash = subjectHash
             };
 
             return entity;
@@ -77,11 +99,15 @@ namespace NsauT.Web.Checker
 
         private SchoolDayEntity MapOneSchoolDay(SchoolDayModel day)
         {
+            string dayJson = TimetableSerializer.SerializeToJson(day);
+            string dayHash = HashCoder.GetSha256Hash(dayJson);
+
             var entity = new SchoolDayEntity
             {
                 Day = day.Day,
                 IsDayOfEvenWeek = day.IsDayOfEvenWeek,
-                Periods = MapPeriods(day.Periods)
+                Periods = MapPeriods(day.Periods),
+                Hash = dayHash
             };
 
             return entity;
@@ -102,6 +128,9 @@ namespace NsauT.Web.Checker
 
         private PeriodEntity MapOnePeriod(PeriodModel period)
         {
+            string periodJson = TimetableSerializer.SerializeToJson(period);
+            string periodHash = HashCoder.GetSha256Hash(periodJson);
+
             var entity = new PeriodEntity
             {
                 Number = period.Number,
@@ -110,7 +139,8 @@ namespace NsauT.Web.Checker
                 IsLecture = period.IsLecture,
                 Option = period.Modification.Option,
                 OptionDate = period.Modification.Date,
-                OptionCabinet = period.Modification.Cabinet
+                OptionCabinet = period.Modification.Cabinet,
+                Hash = periodHash
             };
 
             return entity;

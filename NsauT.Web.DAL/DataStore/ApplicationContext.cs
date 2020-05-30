@@ -8,6 +8,7 @@ namespace NsauT.Web.DAL.DataStore
     {
         public DbSet<TimetableEntity> Timetables { get; set; }
         public DbSet<SubjectEntity> Subjects { get; set; }
+        public DbSet<SubjectInfoEntity> SubjectInfos { get; set; }
         public DbSet<SchoolDayEntity> SchoolDays { get; set; }
         public DbSet<PeriodEntity> Periods { get; set; }
         public DbSet<GroupEntity> Groups { get; set; }
@@ -32,6 +33,13 @@ namespace NsauT.Web.DAL.DataStore
             modelBuilder.Entity<SubjectEntity>()
                 .HasMany(s => s.Days)
                 .WithOne(d => d.Subject)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<SubjectEntity>()
+                .HasOne(s => s.Info)
+                .WithOne(i => i.Subject)
+                .HasForeignKey<SubjectInfoEntity>(i => i.SubjectId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
 

@@ -22,13 +22,25 @@ namespace NsauT.Web.Checker
             Console.WriteLine("Checker started.");
 
             Configuration = GetConfiguration();
-            ConnectionString = Configuration.GetConnectionString("TimetableDatabase");
+            ConnectionString = GetConnectionString();
 
             var parser = new ParserWorker();
             parser.TimetableFileParsed += StartCheckTimetables;
 
             bool downloadOnlyFirstTimetable = IsTestRun(args);
             parser.StartParse(downloadOnlyFirstTimetable);
+        }
+
+        private static string GetConnectionString()
+        {
+            string connString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+            if (!string.IsNullOrEmpty(connString))
+            {
+                return connString;
+            }
+
+            connString = Configuration.GetConnectionString("TimetableDatabase");
+            return connString;
         }
 
         private static bool IsTestRun(string[] args) => args.Contains("-test");
@@ -44,37 +56,42 @@ namespace NsauT.Web.Checker
         private static void StartCheckTimetables(object sender, EventArgs e)
         {
             var parserArgs = e as ParserEventArgs;
-            var timetableChecker = new TimetableChecker();
-            var timetableSerializer = new TimetableSerializer();
-            var hashCoder = new HashCoder();
+            var timetableChecker = new TimetableUpdater();
 
             List<TimetableModel> timetables = parserArgs.Timetables;
 
-            DbContextOptions options = new DbContextOptionsBuilder().UseNpgsql(ConnectionString).Options;
+            DbContextOptions options = new DbContextOptionsBuilder()
+                .UseNpgsql(ConnectionString, o => o.SetPostgresVersion(9, 6)).Options;
+
             using (var context = new ApplicationContext(options))
             {
                 foreach (TimetableModel timetable in timetables)
                 {
-                    string jsonTimetable = timetableSerializer.SerializeToJson(timetable);
-                    string hash = hashCoder.GetSha256Hash(jsonTimetable);
-
                     TimetableEntity timetableEntity = context.Timetables
-                        .FirstOrDefault(t => t.Key == timetable.Key);
+                        .Include(t => t.Groups)
+                        .Include(t => t.Subjects)
+                            .ThenInclude(s => s.Info)
+                        .Include(t => t.Subjects)
+                            .ThenInclude(s => s.Days)
+                                .ThenInclude(d => d.Periods)
+                        .SingleOrDefault(t => t.Key == timetable.Key);
+
+                    TimetableEntity newTimetable = (new EntityMapper()).MapTimetable(timetable);
 
                     if (timetableEntity == null)
                     {
-                        timetableChecker.AddTimetable(context, timetable, hash);
+                        timetableChecker.AddTimetable(context, newTimetable);
 
                         // if (added) need notify?
                         continue;
                     }
 
-                    if (timetableChecker.IsSameTimetable(timetableEntity, hash))
+                    if (timetableChecker.IsSameTimetable(timetableEntity, newTimetable))
                     {
                         continue;
                     }
 
-                    timetableChecker.UpdateTimetable(context, timetableEntity, timetable, hash);
+                    timetableChecker.UpdateTimetable(context, timetableEntity, newTimetable);
                     // if (updated) need notify?
                 }
             }
