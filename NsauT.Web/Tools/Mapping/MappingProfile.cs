@@ -16,7 +16,7 @@ namespace NsauT.Web.Tools.Mapping
             CreateMap<NsauT.Web.BLL.Services.Timetable.DTO.TimetableModelDto,
                 NsauT.Web.Areas.Manage.Models.TimetableController.TimetableViewModel>();
 
-            CreateMap<NsauT.Web.BLL.Services.Timetable.DTO.SubjectInfoDto,
+            CreateMap<NsauT.Web.BLL.Services.Timetable.DTO.SubjectShortDto,
                 NsauT.Web.Areas.Manage.Models.TimetableController.SubjectModel>();
 
             CreateMap<NsauT.Web.BLL.Services.Subject.DTO.SubjectDto,
@@ -48,6 +48,12 @@ namespace NsauT.Web.Tools.Mapping
 
             CreateMap<string, NsauT.Shared.Enums.PeriodOption>()
                 .ConvertUsing(typeof(StringToPeriodOptionConverter));
+
+            CreateMap<NsauT.Web.BLL.Services.Subject.DTO.SubjectInfoDto,
+               NsauT.Web.Areas.Manage.Models.SubjectController.SubjectInfoBindingModel>();
+
+            CreateMap<NsauT.Web.Areas.Manage.Models.SubjectController.SubjectInfoBindingModel,
+                NsauT.Web.BLL.Services.Subject.DTO.SubjectInfoDto>();
 
             #region api-dto mapping
             CreateMap<NsauT.Web.BLL.Services.Timetable.DTO.ApprovedTimetableDto, 

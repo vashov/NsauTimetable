@@ -44,7 +44,7 @@ namespace NsauT.Web.BLL.Services.Timetable
                 {
                     Key = t.Key,
                     Groups = t.Groups.Select(g => g.Number),
-                    Subjects = t.Subjects.Select(s => new SubjectInfoDto
+                    Subjects = t.Subjects.Select(s => new SubjectShortDto
                     {
                         Id = s.Id,
                         Title = s.Info.Title,

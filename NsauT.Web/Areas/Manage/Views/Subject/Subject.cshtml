@@ -5,68 +5,79 @@
     ViewData["Title"] = "Subject";
 }
 
-<h5>@Model.Title</h5>
-<div>
-    @Model.Teachers
+<div class="card mb-2">
+    <div class="card-body" id="info">
+        <h5 class="card-title">@Model.Title</h5>
+        <p class="card-text">Преподаватели: @Model.Teachers</p>
+        <p class="card-text">Лекции: @(Model.LectureStartDate?.ToString("d") ?? "...") - @(Model.LectureEndDate?.ToString("d") ?? "...")</p>
+        <p class="card-text">Практики: @(Model.PracticeStartDate?.ToString("d") ?? "...") - @(Model.PracticeEndDate?.ToString("d") ?? "...")</p>
+        <p class="card-text">
+            Заголовок проверен:
+            <img src="~/images/@(Model.IsInfoApproved ? "check-3x.png" : "x-3x.png")" class="ml-2 mr-2" alt="@(Model.IsInfoApproved ? "Да" : "Нет")" data-check-img-url='@Url.Content("/images/check-3x.png")' />
+            <button type="button" onclick="approveSubjectInfo(@Model.SubjectInfoId)" data-request-url='@Url.Action("approveinfo", "subject")' class="btn @(Model.IsInfoApproved ? "btn-outline-secondary" : "btn-outline-success") btn-sm approve-btn mb-2" @(Model.IsInfoApproved ? "disabled" : "")>Проверено</button>
+        </p>
+        <button type="button" onclick="editSubjectInfo(@Model.SubjectInfoId)" data-request-url='@Url.Action("info", "subject")' class="btn btn-outline-primary btn-sm edit-btn">Редактировать</button>
+    </div>
 </div>
-<br />
-<div>
-    Лекции: @(Model.LectureStartDate?.ToString("d") ?? "...") - @(Model.LectureEndDate?.ToString("d") ?? "...")
+
+<div class="card mb-4">
+    <div class="card-body" id="subjectStatus">
+        <p class="card-text">
+            Предмет проверен: 
+            <img src="~/images/@(Model.IsApproved ? "check-3x.png" : "x-3x.png")" class="ml-2" alt="@(Model.IsApproved ? "Да" : "Нет")" data-check-img-url='@Url.Content("/images/check-3x.png")' />
+        </p>
+    </div>
 </div>
-<div>
-    Практики: @(Model.PracticeStartDate?.ToString("d") ?? "...") - @(Model.PracticeEndDate?.ToString("d") ?? "...")
-</div>
-<br /><br />
 
 @foreach (SchoolDayModel day in Model.Days)
 {
-<div class="mb-5 pb-3" id='@("day" + day.Id)'>
-    <div class="row mb-2">
-        <div class="col-2">
-            <span class="mr-1"><img src="~/images/@(day.IsApproved ? "check-3x.png" : "x-3x.png")" alt="@(day.IsApproved ? "Да" : "Нет")" data-check-img-url='@Url.Content("/images/check-3x.png")'/></span>
-            <span class="font-weight-bold dayName">@day.Day - @(day.IsDayOfEvenWeek ? "Четная" : "Нечетная")</span>
+    <div class="mb-5 pb-3" id='@("day" + day.Id)'>
+        <div class="row mb-2">
+            <div class="col-2">
+                <span class="mr-1"><img src="~/images/@(day.IsApproved ? "check-3x.png" : "x-3x.png")" alt="@(day.IsApproved ? "Да" : "Нет")" data-check-img-url='@Url.Content("/images/check-3x.png")' /></span>
+                <span class="font-weight-bold dayName">@day.Day - @(day.IsDayOfEvenWeek ? "Четная" : "Нечетная")</span>
+            </div>
+            <div class="col-2">
+                <button type="button" onclick="deleteDay(@day.Id)" class="btn btn-outline-danger btn-sm delete-day-btn" data-request-url='@Url.Action("delete", "schoolday")'>Удалить день</button>
+            </div>
         </div>
-        <div class="col-2">
-            <button type="button" onclick="deleteDay(@day.Id)" class="btn btn-outline-danger btn-sm delete-day-btn" data-request-url='@Url.Action("delete", "schoolday")'>Удалить день</button>
-        </div>
-    </div>
-    <table class="table table-bordered table-hover">
-        <thead class="thead-dark">
-            <tr>
-                <th class="fit">Проверена</th>
-                <th>Номер пары</th>
-                <th class="fit">Лекция</th>
-                <th class="fit">Подгруппа</th>
-                <th>Кабинет</th>
-                <th>*Особое</th>
-                <th>*Дата</th>
-                <th>*Кабинет</th>
-                <th class="fit"></th>
-                <th class="fit"></th>
-                <th class="fit"></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (PeriodModel period in day.Periods.OrderBy(p => p.Number))
-            {
-                <tr id="@("period" + period.Id)">
-                    <td class="fit"><img src="~/images/@(period.IsApproved ? "check-3x.png" : "x-3x.png")" alt="@(period.IsApproved ? "Да" : "Нет")" data-check-img-url='@Url.Content("/images/check-3x.png")'/></td>
-                    <td class="period-number">@period.Number</td>
-                    <td class="fit">@(period.IsLecture ? "Да" : "Нет")</td>
-                    <td class="fit">@period.Subgroup</td>
-                    <td>@period.Cabinet</td>
-                    <td>@period.Option</td>
-                    <td>@period.OptionDate</td>
-                    <td>@period.OptionCabinet</td>
-                    <td class="fit"><button type="button" onclick="approvePeriod(@period.Id, @day.Id)" @(period.IsApproved ? "disabled" : "") class="btn @(period.IsApproved ? "btn-outline-secondary" : "btn-outline-success") btn-sm approve-btn" data-request-url='@Url.Action("approve", "period")'>Проверено</button></td>
-                    <td class="fit"><button onclick="editPeriod(@period.Id, @day.Id)" class="btn btn-outline-primary btn-sm edit-btn" data-request-url='@Url.Action("period", "period")'>Редактировать</button></td>
-                    <td class="fit"><button type="button" onclick="deletePeriod(@period.Id, @day.Id)" class="btn btn-outline-danger btn-sm delete-btn" data-request-url='@Url.Action("delete", "period")'>Удалить</button></td>
+        <table class="table table-bordered table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th class="fit">Проверена</th>
+                    <th>Номер пары</th>
+                    <th class="fit">Лекция</th>
+                    <th class="fit">Подгруппа</th>
+                    <th>Кабинет</th>
+                    <th>*Особое</th>
+                    <th>*Дата</th>
+                    <th>*Кабинет</th>
+                    <th class="fit"></th>
+                    <th class="fit"></th>
+                    <th class="fit"></th>
                 </tr>
-            }
-        </tbody>
-    </table>
-    <button class="btn btn-outline-primary btn-sm new-period-btn" onclick="addNewPeriod(@day.Id)" data-request-url='@Url.Action("period", "period")'>Добавить пару</button>
-</div>
+            </thead>
+            <tbody>
+                @foreach (PeriodModel period in day.Periods.OrderBy(p => p.Number))
+                {
+                    <tr id="@("period" + period.Id)">
+                        <td class="fit"><img src="~/images/@(period.IsApproved ? "check-3x.png" : "x-3x.png")" alt="@(period.IsApproved ? "Да" : "Нет")" data-check-img-url='@Url.Content("/images/check-3x.png")' /></td>
+                        <td class="period-number">@period.Number</td>
+                        <td class="fit">@(period.IsLecture ? "Да" : "Нет")</td>
+                        <td class="fit">@period.Subgroup</td>
+                        <td>@period.Cabinet</td>
+                        <td>@period.Option</td>
+                        <td>@period.OptionDate</td>
+                        <td>@period.OptionCabinet</td>
+                        <td class="fit"><button type="button" onclick="approvePeriod(@period.Id, @day.Id)" @(period.IsApproved ? "disabled" : "") class="btn @(period.IsApproved ? "btn-outline-secondary" : "btn-outline-success") btn-sm approve-btn" data-request-url='@Url.Action("approve", "period")'>Проверено</button></td>
+                        <td class="fit"><button onclick="editPeriod(@period.Id, @day.Id)" class="btn btn-outline-primary btn-sm edit-btn" data-request-url='@Url.Action("period", "period")'>Редактировать</button></td>
+                        <td class="fit"><button type="button" onclick="deletePeriod(@period.Id, @day.Id)" class="btn btn-outline-danger btn-sm delete-btn" data-request-url='@Url.Action("delete", "period")'>Удалить</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <button class="btn btn-outline-primary btn-sm new-period-btn" onclick="addNewPeriod(@day.Id)" data-request-url='@Url.Action("period", "period")'>Добавить пару</button>
+    </div>
 }
 
 @section scripts {
