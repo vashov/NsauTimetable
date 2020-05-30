@@ -16,6 +16,9 @@ namespace NsauT.Web.DAL.Models
         public DateTime? OptionDate { get; set; }
         public string OptionCabinet { get; set; }
         public SchoolDayEntity SchoolDay { get; set; }
+
+        [Required]
+        public string Hash { get; set; }
         public bool IsApproved { get; set; }
     }
 }

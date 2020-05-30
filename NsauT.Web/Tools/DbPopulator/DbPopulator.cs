@@ -11,7 +11,7 @@ namespace NsauT.Web.Tools
 {
     public static class DbPopulator
     {
-        public async static Task PopulateDbWithRolesAsync(IHost host)
+        public async static Task PopulateDbWithRolesAndAdminAsync(IHost host)
         {
             using (var scope = host.Services.CreateScope())
             {

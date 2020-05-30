@@ -3,10 +3,7 @@ using NsauT.Web.BLL.Services.Subject.DTO;
 using NsauT.Web.BLL.Services.Timetable;
 using NsauT.Web.DAL.DataStore;
 using NsauT.Web.DAL.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace NsauT.Web.BLL.Services.Subject
 {
@@ -25,17 +22,18 @@ namespace NsauT.Web.BLL.Services.Subject
         {
             IQueryable<SubjectDto> query = Context.Subjects
                 .AsNoTracking()
+                .Include(s => s.Info)
                 .Include(s => s.Days)
                 .ThenInclude(d => d.Periods)
                 .Where(t => t.Id == subjectId)
                 .Select(s => new SubjectDto
                 {
-                    Title = s.Title,
-                    Teachers = s.Teachers,
-                    LectureStartDate = s.LectureStartDate,
-                    LectureEndDate = s.PracticeEndDate,
-                    PracticeStartDate = s.PracticeStartDate,
-                    PracticeEndDate = s.PracticeEndDate,
+                    Title = s.Info.Title,
+                    Teachers = s.Info.Teachers,
+                    LectureStartDate = s.Info.LectureStartDate,
+                    LectureEndDate = s.Info.PracticeEndDate,
+                    PracticeStartDate = s.Info.PracticeStartDate,
+                    PracticeEndDate = s.Info.PracticeEndDate,
                     Days = s.Days.Select(d => new SchoolDayDto
                     {
                         Id = d.Id,
@@ -64,6 +62,7 @@ namespace NsauT.Web.BLL.Services.Subject
         public ServiceResult UpdateApprovedStatus(int subjectId)
         {
             SubjectEntity subject = Context.Subjects
+                .Include(s => s.Info)
                 .Include(s => s.Days)
                 .Include(s => s.Timetable)
                 .SingleOrDefault(s => s.Id == subjectId);
@@ -73,7 +72,7 @@ namespace NsauT.Web.BLL.Services.Subject
                 return new ServiceResult(Result.NotFound);
             }
 
-            subject.IsApproved = subject.Days.All(d => d.IsApproved);
+            subject.IsApproved = subject.Days.All(d => d.IsApproved) && subject.Info.IsApproved;
 
             Context.SaveChanges();
 

@@ -11,7 +11,7 @@ namespace NsauT.Web
         {
             IHost host = CreateHostBuilder(args).Build();
 
-            await DbPopulator.PopulateDbWithRolesAsync(host);
+            await DbPopulator.PopulateDbWithRolesAndAdminAsync(host);
 
             host.Run();
         }

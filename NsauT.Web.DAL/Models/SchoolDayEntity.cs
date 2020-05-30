@@ -12,6 +12,9 @@ namespace NsauT.Web.DAL.Models
         public bool IsDayOfEvenWeek { get; set; }
         public List<PeriodEntity> Periods { get; set; }
         public SubjectEntity Subject { get; set; }
+
+        [Required]
+        public string Hash { get; set; }
         public bool IsApproved { get; set; }
     }
 }

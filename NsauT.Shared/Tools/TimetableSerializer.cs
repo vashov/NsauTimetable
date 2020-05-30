@@ -6,9 +6,9 @@ namespace NsauT.Shared.Tools
 {
     public class TimetableSerializer
     {
-        private JsonSerializerOptions JsonOptions { get; set; }
+        private static JsonSerializerOptions JsonOptions { get; }
 
-        public TimetableSerializer()
+        static TimetableSerializer()
         {
             var jsonOptions = new JsonSerializerOptions
             {
@@ -20,16 +20,16 @@ namespace NsauT.Shared.Tools
             JsonOptions = jsonOptions;
         }
 
-        public string SerializeToJson(TimetableModel timetable)
+        public static string SerializeToJson<T>(T model)
         {
-            string json = JsonSerializer.Serialize(timetable, JsonOptions);
+            string json = JsonSerializer.Serialize(model, JsonOptions);
             return json;
         }
 
-        public TimetableModel DeserializeJson(string json)
+        public static T DeserializeJson<T>(string json)
         {
-            TimetableModel timetable = JsonSerializer.Deserialize<TimetableModel>(json, JsonOptions);
-            return timetable;
+            T model = JsonSerializer.Deserialize<T>(json, JsonOptions);
+            return model;
         }
     }
 }

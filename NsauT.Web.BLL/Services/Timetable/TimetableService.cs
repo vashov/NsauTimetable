@@ -38,6 +38,7 @@ namespace NsauT.Web.BLL.Services.Timetable
                 .AsNoTracking()
                 .Include(t => t.Groups)
                 .Include(t => t.Subjects)
+                    .ThenInclude(s => s.Info)
                 .Where(t => t.Id == timetableId)
                 .Select(t => new TimetableModelDto
                 {
@@ -46,8 +47,8 @@ namespace NsauT.Web.BLL.Services.Timetable
                     Subjects = t.Subjects.Select(s => new SubjectInfoDto
                     {
                         Id = s.Id,
-                        Title = s.Title,
-                        Teachers = s.Teachers,
+                        Title = s.Info.Title,
+                        Teachers = s.Info.Teachers,
                         IsApproved = s.IsApproved
                     }),
                     IsApproved = t.IsApproved
@@ -99,7 +100,9 @@ namespace NsauT.Web.BLL.Services.Timetable
                 .Include(t => t.Groups)
                 .Include(t => t.Subjects)
                     .ThenInclude(s => s.Days)
-                    .ThenInclude(d => d.Periods)
+                        .ThenInclude(d => d.Periods)
+                .Include(t => t.Subjects)
+                    .ThenInclude(s => s.Info)
                 .Select(t => new TimetableApiDto
                 {
                     Id = t.Id,
@@ -109,12 +112,12 @@ namespace NsauT.Web.BLL.Services.Timetable
                     Subjects = t.Subjects.Select(s => new SubjectApiDto
                     {
                         Id = s.Id, 
-                        Title = s.Title,
-                        Teachers = s.Teachers,
-                        LectureStartDate = s.LectureStartDate,
-                        LectureEndDate = s.LectureEndDate,
-                        PracticeStartDate = s.PracticeStartDate,
-                        PracticeEndDate  = s.PracticeEndDate,
+                        Title = s.Info.Title,
+                        Teachers = s.Info.Teachers,
+                        LectureStartDate = s.Info.LectureStartDate,
+                        LectureEndDate = s.Info.LectureEndDate,
+                        PracticeStartDate = s.Info.PracticeStartDate,
+                        PracticeEndDate  = s.Info.PracticeEndDate,
                         Days = s.Days.Select(d => new SchoolDayApiDto
                         {
                             Id = d.Id,

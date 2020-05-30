@@ -15,7 +15,7 @@ namespace NsauT.Web.DAL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
+                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
                 .HasAnnotation("ProductVersion", "3.1.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -50,7 +50,7 @@ namespace NsauT.Web.DAL.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text");
@@ -74,7 +74,7 @@ namespace NsauT.Web.DAL.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text");
@@ -154,7 +154,7 @@ namespace NsauT.Web.DAL.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
 
                     b.Property<string>("Number")
                         .HasColumnType("text");
@@ -174,9 +174,13 @@ namespace NsauT.Web.DAL.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
 
                     b.Property<string>("Cabinet")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Hash")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("IsApproved")
@@ -215,10 +219,14 @@ namespace NsauT.Web.DAL.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
 
                     b.Property<int>("Day")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsApproved")
                         .HasColumnType("boolean");
@@ -241,7 +249,39 @@ namespace NsauT.Web.DAL.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
+
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("HashDays")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("TimetableId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TimetableId");
+
+                    b.ToTable("Subjects");
+                });
+
+            modelBuilder.Entity("NsauT.Web.DAL.Models.SubjectInfoEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
+
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsApproved")
                         .HasColumnType("boolean");
@@ -258,20 +298,21 @@ namespace NsauT.Web.DAL.Migrations
                     b.Property<DateTime?>("PracticeStartDate")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<int>("SubjectId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Teachers")
                         .HasColumnType("text");
-
-                    b.Property<int>("TimetableId")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TimetableId");
+                    b.HasIndex("SubjectId")
+                        .IsUnique();
 
-                    b.ToTable("Subjects");
+                    b.ToTable("SubjectInfos");
                 });
 
             modelBuilder.Entity("NsauT.Web.DAL.Models.TimetableEntity", b =>
@@ -279,7 +320,7 @@ namespace NsauT.Web.DAL.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
 
                     b.Property<string>("Hash")
                         .IsRequired()
@@ -446,6 +487,15 @@ namespace NsauT.Web.DAL.Migrations
                     b.HasOne("NsauT.Web.DAL.Models.TimetableEntity", "Timetable")
                         .WithMany("Subjects")
                         .HasForeignKey("TimetableId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("NsauT.Web.DAL.Models.SubjectInfoEntity", b =>
+                {
+                    b.HasOne("NsauT.Web.DAL.Models.SubjectEntity", "Subject")
+                        .WithOne("Info")
+                        .HasForeignKey("NsauT.Web.DAL.Models.SubjectInfoEntity", "SubjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
