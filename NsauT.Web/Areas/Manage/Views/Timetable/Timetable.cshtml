@@ -5,19 +5,12 @@
     ViewData["Title"] = "Timetable";
 }
 
-<p>
-    Key: @Model.Key
-</p>
-
-<p>
-    <span>Группы:</span><br />
-    <ul>
-        @foreach (string group in Model.Groups)
-        {
-            <li>@group</li>
-        }
-    </ul>
-</p>
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Ключ: @Model.Key</h5>
+        <p class="card-text">Группы: @string.Join(" / ", Model.Groups) </p>
+    </div>
+</div>
 
 <br />
 

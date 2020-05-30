@@ -1,6 +1,6 @@
 ﻿namespace NsauT.Web.BLL.Services.Timetable.DTO
 {
-    public class SubjectInfoDto
+    public class SubjectShortDto
     {
         public int Id { get; set; }
         public string Title { get; set; }

@@ -1,0 +1,45 @@
+﻿@model NsauT.Web.Areas.Manage.Models.SubjectController.SubjectInfoViewModel
+
+@{
+    ViewData["Title"] = "Info";
+}
+
+<h5>Редактирование предмета</h5>
+<div class="row">
+    <form class="col-4" asp-action="info" asp-route-id="@Model.SubjectInfoId" method="post">
+        <div class="form-group">
+            <label for="SubjectInfo.Title">Название:</label>
+            <input class="form-control" type="text" asp-for="SubjectInfo.Title" />
+            @*<span asp-validation-for="SubjectInfo.Title"></span>*@
+        </div>
+
+        <div class="form-group">
+            <label for="SubjectInfo.Teachers">Преподаватели:</label>
+            <input class="form-control" type="text" asp-for="SubjectInfo.Teachers" />
+        </div>
+
+        <div class="form-group">
+            <label for="SubjectInfo.LectureStartDate">Лекции. Начало:</label>
+            <input class="form-control" type="date" asp-for="SubjectInfo.LectureStartDate" />
+        </div>
+
+        <div class="form-group">
+            <label for="SubjectInfo.LectureEndDate">Лекции. Конец:</label>
+            <input class="form-control" type="date" asp-for="SubjectInfo.LectureEndDate" />
+        </div>
+
+        <div class="form-group">
+            <label for="SubjectInfo.PracticeStartDate">Практики. Начало:</label>
+            <input class="form-control" type="date" asp-for="SubjectInfo.PracticeStartDate" />
+        </div>
+
+        <div class="form-group">
+            <label for="SubjectInfo.PracticeEndDate">Практики. Конец:</label>
+            <input class="form-control" type="date" asp-for="SubjectInfo.PracticeEndDate" />
+        </div>
+
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+        <button class="btn btn-primary" type="submit">Обновить</button>
+    </form>
+</div>

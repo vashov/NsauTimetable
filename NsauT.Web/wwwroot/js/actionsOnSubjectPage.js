@@ -1,7 +1,63 @@
-﻿function editPeriod(periodId, dayId) {
+﻿function approveSubjectInfo(subjectInfoId) {
+    var btn = $('.card-body' + ' #info' + ' .approve-btn');
+    var requestUrl = btn.data('request-url');
+    console.log('approve info ' + requestUrl);
+
+    btn.prop('disabled', true);
+    btn.html('<span class="spinner-border spinner-border-sm"></span> Загрузка...');
+
+    $.ajax({
+        type: 'PUT',
+        url: requestUrl + '/' + subjectInfoId,
+        dataType: 'json',
+        error: function () {
+            btn.html('Проверено');
+            btn.prop('disabled', false);
+            alert('error');
+        },
+        success: function (result) {
+            console.log('success: ' + result.infoApproved);
+            console.log('success: ' + result.periodApproved + ' ' + result.dayApproved);
+
+            btn.html('Проверено');
+
+            if (!result.infoApproved) {
+                btn.prop('disabled', false);
+                return;
+            }
+
+            var infoImg = $('.card-body' + ' #info'+ ' img');
+            var checkImgUrl = infoImg.data('check-img-url');
+            infoImg.attr('src', checkImgUrl);
+            infoImg.attr('alt', 'Да');
+
+            btn.prop('disabled', true);
+            btn.addClass('btn-outline-secondary');
+            btn.removeClass('btn-outline-success');
+
+            if (!result.subjectApproved) {
+                return;
+            }
+
+            var subjectImg = $('.card-body' + ' #subjectStatus' + ' img');
+            var checkSubjectImgUrl = subjectImg.data('check-img-url');
+            subjectImg.attr('src', checkSubjectImgUrl);
+            subjectImg.attr('alt', 'Да');
+        }
+    });
+}
+
+function editSubjectInfo(subjectInfoId) {
+    var btn = $('.card-body' + ' #info' + ' .edit-btn');
+    var requestUrl = btn.data('request-url');
+    console.log('edit info ' + requestUrl);
+    window.location = requestUrl + '/' + subjectInfoId;
+}
+
+function editPeriod(periodId, dayId) {
     var btn = $('#period' + periodId + ' .edit-btn');
     var requestUrl = btn.data('request-url');
-    console.log('edit period' + requestUrl);
+    console.log('edit period ' + requestUrl);
     console.log(periodId + ' ' + dayId);
 
     window.location = requestUrl + '/' + periodId + '?dayId=' + dayId;
