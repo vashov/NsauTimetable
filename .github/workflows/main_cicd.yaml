@@ -16,8 +16,8 @@ jobs:
           dotnet-version: '3.1.x'
       - name: Build web app
         run: |
-        cd NsauT.Web
-        dotnet build --configuration Release
+          cd NsauT.Web
+          dotnet build --configuration Release
 
   deploy:
     needs: [check_build_web]
@@ -31,4 +31,4 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
-          script: [ -f ${{ secrets.SERVER_PATH_DEPLOY_SCRIPT }} ] && ${{ secrets.SERVER_PATH_DEPLOY_SCRIPT }} ${{ secrets.DB_CONNECTION_STRING}} || echo "deploy script not found"
+          script: if [ -f ${{ secrets.SERVER_PATH_DEPLOY_SCRIPT }} ]; then ${{ secrets.SERVER_PATH_DEPLOY_SCRIPT }} ${{ secrets.DB_CONNECTION_STRING}}; else echo "deploy script not found"; fi
