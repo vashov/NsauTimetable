@@ -12,7 +12,7 @@ git checkout master
 git pull
 
 writeHeader "Build docker for web"
-docker build -t nsau_web
+docker build -t nsau_web .
 
 writeHeader "Set environment variables"
 export DB_CONNECTION_STRING=$1
