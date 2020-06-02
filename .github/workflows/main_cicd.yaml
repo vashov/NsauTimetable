@@ -34,6 +34,6 @@ jobs:
           script: |
             cd {{ secrets.SERVER_PROJECT_PATH }}
             if [ -f deploy.sh ]
-            then bash ${{ deploy.sh }} ${{ secrets.DB_CONNECTION_STRING}}
+            then bash deploy.sh ${{ secrets.DB_CONNECTION_STRING}}
             else echo "deploy script not found"
             fi
