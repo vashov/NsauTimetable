@@ -7,6 +7,7 @@ on: [push]
 
 jobs:
   check_build_web:
+    name: Check build web
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
@@ -32,7 +33,7 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
-            cd {{ secrets.SERVER_PROJECT_PATH }}
+            cd ${{ secrets.SERVER_PROJECT_PATH }}
             if [ -f deploy.sh ]
             then bash deploy.sh ${{ secrets.DB_CONNECTION_STRING}}
             else echo "deploy script not found"
