@@ -34,7 +34,8 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             cd ~/projects/nsau_timetable/
-            git checkout master
+            #git checkout master
+            git checkout fix_scriptInGithubActions
             git pull
             if [ -f deploy.sh ]
             then bash deploy.sh ${{ secrets.DB_CONNECTION_STRING}}
