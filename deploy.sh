@@ -17,24 +17,24 @@ function moveToProjectFolder {
 
 function createPublishFolder {
 	writeHeader "Create publish folder"
-	mkdir -p --verbose outputDirectory
+	mkdir -p --verbose $outputDirectory
 }
 
 function cleanPublishFolder {
 	writeHeader "Clean publish folder"
 	local cleanPath="${outputDirectory}/*"
-	rm -r cleanPath
+	rm -r $cleanPath
 }
 
 function buildWebRelease {
 	writeHeader "Build web release"
-	dotnet publish -c Release -o outputDirectory
+	dotnet publish -c Release -o ${outputDirectory}
 }
 
 function runWebRelease {
 	writeHeader "Run web release"
 	local executingPath="${outputDirectory}/NsauT.Web"
-	dotnet executingPath
+	dotnet $executingPath
 }
 
 function checkWebApp {
