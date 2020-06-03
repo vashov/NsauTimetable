@@ -12,7 +12,7 @@ function setEnvVariables {
 
 function moveToProjectFolder {
 	writeHeader "Move to project repository folder"
-	cd "~/projects/nsau_timetable"
+	cd ~/projects/nsau_timetable
 }
 
 function createPublishFolder {
