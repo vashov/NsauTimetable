@@ -27,7 +27,7 @@ function cleanPublishFolder {
 
 function buildWebRelease {
 	writeHeader "Build web release"
-	dotnet publish -c Release -o ${outputDirectory}
+	dotnet publish ./NsauT.Web/NsauT.Web.csproj -c Release -o ${outputDirectory}
 }
 
 function runWebRelease {
