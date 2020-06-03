@@ -22,8 +22,7 @@ function createPublishFolder {
 
 function cleanPublishFolder {
 	writeHeader "Clean publish folder"
-	local cleanPath="${outputDirectory}/*"
-	rm -r $cleanPath
+	rm -rf --verbose $outputDirectory/*
 }
 
 function buildWebRelease {
