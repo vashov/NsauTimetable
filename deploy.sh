@@ -32,7 +32,7 @@ function buildWebRelease {
 
 function runWebRelease {
 	writeHeader "Run web release"
-	local executingPath="${outputDirectory}/NsauT.Web"
+	local executingPath="${outputDirectory}/NsauT.Web.dll"
 	dotnet $executingPath
 }
 
@@ -49,4 +49,4 @@ createPublishFolder &&
 cleanPublishFolder && 
 buildWebRelease && 
 runWebRelease && 
-checkWebApp
+checkWebApp || exit 1

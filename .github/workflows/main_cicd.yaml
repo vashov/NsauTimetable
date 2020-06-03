@@ -37,6 +37,6 @@ jobs:
             git checkout master
             git pull
             if [ -f deploy.sh ]
-            then bash deploy.sh ${{ secrets.DB_CONNECTION_STRING}}
+            then bash deploy.sh ${{ secrets.DB_CONNECTION_STRING}} || exit 1
             else echo "deploy script not found"
             fi
