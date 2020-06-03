@@ -33,7 +33,9 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
-            cd ${{ secrets.SERVER_PROJECT_PATH }}
+            cd ~/projects/nsau_timetable/
+            git checkout master
+            git pull
             if [ -f deploy.sh ]
             then bash deploy.sh ${{ secrets.DB_CONNECTION_STRING}}
             else echo "deploy script not found"
