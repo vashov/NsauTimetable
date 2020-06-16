@@ -52,7 +52,7 @@ namespace NsauT.Web.Controllers
                     ModelState.AddModelError(error.Key, error.Message);
                 }
 
-                return View();
+                return View(user);
             }
 
             // проверяем, принадлежит ли URL приложению
