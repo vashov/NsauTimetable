@@ -37,6 +37,7 @@ function restartNsauWebService {
 }
 
 function checkWebApp {
+	sleep 5 # wait 5 seconds for restarting service 
 	writeHeader "Check web app"
 	curl localhost:5000
 }
