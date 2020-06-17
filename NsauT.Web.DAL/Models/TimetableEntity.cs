@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace NsauT.Web.DAL.Models
@@ -22,5 +23,9 @@ namespace NsauT.Web.DAL.Models
         public string Hash { get; set; }
 
         public bool IsApproved { get; set; }
+
+        public DateTime Created { get; set; }
+        public DateTime? Updated { get; set; }
+        public DateTime? NotChanged { get; set; }
     }
 }

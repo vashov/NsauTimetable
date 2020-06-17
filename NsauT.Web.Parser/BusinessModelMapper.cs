@@ -138,7 +138,7 @@ namespace NsauT.Web.Parser
             const string groupEnd = "end";
 
             string pattern = 
-                $@"с\s*(?<{groupStart}>\d{{2}}\s*\.\s*\d{{2}})\s*по\s*(?<{groupEnd}>\d{{2}}\s*\.\s*\d{{2}})";
+                $@"с\s*(?<{groupStart}>\d{{2}}\s*\.\s*\d{{2}})\s*(-|по)\s*(?<{groupEnd}>\d{{2}}\s*\.\s*\d{{2}})";
 
             Match match = Regex.Match(fromToDates, pattern, RegexOptions.IgnoreCase);
             string start = match.Groups[groupStart]?.Value?.Replace(" ", "");

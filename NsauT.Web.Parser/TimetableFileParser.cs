@@ -37,6 +37,7 @@ namespace NsauT.Web.Parser
                         var timetable = new TimetableInfo()
                         {
                             SheetTitle = reader.Name,
+                            Groups = GetGroupNumbers(reader.Name),
                             Subjects = new List<SubjectInfo>()
                         };
 
@@ -76,10 +77,10 @@ namespace NsauT.Web.Parser
                     return;
                 }
 
-                if (!_skipThisRows.Contains(currentRow))
-                {
-                    timetable.Groups = GetGroupNumbers(reader);
-                }
+                //if (!_skipThisRows.Contains(currentRow))
+                //{
+                //    timetable.Groups = GetGroupNumbers(reader);
+                //}
             }
         }
 
@@ -124,7 +125,8 @@ namespace NsauT.Web.Parser
 
         private void FillFromTo(SubjectInfo subject, string fromToShared)
         {
-            string pattern = "\\s*\\.*\\s*с\\s*\\d*\\.\\d*\\s*по\\s*\\d*\\.\\d*";
+            string pattern = "\\s*\\.*\\s*c*\\s*\\.*\\d*\\.*\\d*\\.*\\d*\\s*(-|по)\\.*\\s*\\.*\\d*\\.*\\d*\\.*\\d*";
+            //string pattern = "\\s*\\.*\\s*с\\s*\\d*\\.\\d*\\s*по\\s*\\d*\\.\\d*";
             string patternLecture = "л" + pattern;
             string patternPractice = "пр" + pattern;
             Match lecture = Regex.Match(fromToShared, patternLecture, RegexOptions.IgnoreCase);
@@ -303,6 +305,19 @@ namespace NsauT.Web.Parser
 
             // reader.GetValue() can return: double, int, bool, DateTime, TimeSpan, string, or null
             return string.Empty;
+        }
+
+        private List<string> GetGroupNumbers(string nameOfSheet)
+        {
+            if (string.IsNullOrWhiteSpace(nameOfSheet))
+            {
+                return new List<string>();
+            }
+
+            List<string> groupNumbersOfStudents =
+                nameOfSheet.Trim().Replace(" ", "").Split(',').ToList();
+
+            return groupNumbersOfStudents;
         }
 
         private List<string> GetGroupNumbers(IExcelDataReader reader)

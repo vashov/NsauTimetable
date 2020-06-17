@@ -67,7 +67,7 @@ namespace NsauT.Web.Parser
 
         private string GetFileNameWithCurrentDate(string fileName)
         {
-            return $"{fileName}_time_{DateTime.Now:dd_MM_yyyy_hh_mm_ss_fff}";
+            return $"{fileName}_time_{DateTime.UtcNow:dd_MM_yyyy_hh_mm_ss_fff}";
         }
         
         private string GetFileNameWithExtension(string fileName)

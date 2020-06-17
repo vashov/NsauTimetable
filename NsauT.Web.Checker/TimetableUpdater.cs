@@ -1,5 +1,6 @@
 ﻿using NsauT.Web.DAL.DataStore;
 using NsauT.Web.DAL.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,6 +16,7 @@ namespace NsauT.Web.Checker
         public void UpdateTimetable(ApplicationContext context, TimetableEntity timetableEntity, 
             TimetableEntity newTimetable)
         {
+            timetableEntity.Updated = DateTime.UtcNow;
             timetableEntity.IsApproved = false;
             timetableEntity.Hash = newTimetable.Hash;
 
@@ -26,6 +28,7 @@ namespace NsauT.Web.Checker
 
         public void AddTimetable(ApplicationContext context, TimetableEntity newTimetable)
         {
+            newTimetable.Created = DateTime.UtcNow;
             context.Timetables.Add(newTimetable);
             context.SaveChanges();
         }
