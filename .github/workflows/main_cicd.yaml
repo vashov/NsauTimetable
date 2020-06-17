@@ -36,7 +36,8 @@ jobs:
             cd ~/projects/nsau_timetable/
             git checkout master
             git pull
+            export DB_CONNECTION_STRING=${{ secrets.DB_CONNECTION_STRING}}
             if [ -f deploy.sh ]
-            then bash deploy.sh ${{ secrets.DB_CONNECTION_STRING}} || exit 1
+            then bash deploy.sh || exit 1
             else echo "deploy script not found"
             fi

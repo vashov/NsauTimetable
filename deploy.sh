@@ -5,11 +5,6 @@ function writeHeader {
 	echo "---------------------------------------- $1"
 }
 
-function setEnvVariables {
-	writeHeader "Set environment variables"
-	export DB_CONNECTION_STRING=$1
-}
-
 function moveToProjectFolder {
 	writeHeader "Move to project repository folder"
 	cd ~/projects/nsau_timetable
@@ -30,10 +25,15 @@ function buildWebRelease {
 	dotnet publish ./NsauT.Web/NsauT.Web.csproj -c Release -o ${outputDirectory}
 }
 
-function runWebRelease {
-	writeHeader "Run web release"
-	local executingPath="${outputDirectory}/NsauT.Web.dll"
-	dotnet $executingPath
+#function runWebRelease {
+#	writeHeader "Run web release"
+#	local executingPath="${outputDirectory}/NsauT.Web.dll"
+#	dotnet $executingPath
+#}
+
+function restartNsauWebService {
+	writeHeader "Restart web service"
+	systemctl restart nsau_web.service
 }
 
 function checkWebApp {
@@ -43,10 +43,10 @@ function checkWebApp {
 
 outputDirectory="/var/www/nsau_web"
 
-setEnvVariables $1 &&
 moveToProjectFolder && 
 createPublishFolder &&
 cleanPublishFolder && 
 buildWebRelease && 
-runWebRelease && 
+restartNsauWebService &&
+#runWebRelease && 
 checkWebApp || exit 1
